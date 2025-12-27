@@ -1,0 +1,28 @@
+# PV3 sensors for Deye inverters
+sensors:
+  pv3_voltage:
+    address: 113
+    name: "PV3 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+
+  pv3_current:
+    address: 114
+    name: "PV3 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+
+  pv3_power:
+    address: 188
+    name: "PV3 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"

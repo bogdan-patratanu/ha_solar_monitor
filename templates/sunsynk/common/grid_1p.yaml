@@ -1,0 +1,76 @@
+# Common grid sensors for single-phase Deye/Sunsynk inverters
+# Used by: SG0XLP1
+
+sensors:
+  grid_voltage:
+    address: 150
+    name: "Grid Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:transmission-tower"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  grid_current:
+    address: 160
+    name: "Grid Current"
+    unit: "A"
+    factor: 0.01
+    icon: "mdi:current-ac"
+    device_class: "current"
+    state_class: "measurement"
+  
+  grid_power:
+    address: 169
+    name: "Grid Power"
+    unit: "W"
+    factor: -1  # Signed value
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+  
+  grid_frequency:
+    address: 79
+    name: "Grid Frequency"
+    unit: "Hz"
+    factor: 0.01
+    icon: "mdi:sine-wave"
+    state_class: "measurement"
+  
+  daily_grid_export:
+    address: 81
+    name: "Daily Grid Export"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:transmission-tower-export"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  daily_grid_import:
+    address: 76
+    name: "Daily Grid Import"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:transmission-tower-import"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  total_grid_export:
+    address: [86, 87]
+    name: "Total Grid Export"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:transmission-tower-export"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true
+  
+  total_grid_import:
+    address: [78, 79]
+    name: "Total Grid Import"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:transmission-tower-import"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true

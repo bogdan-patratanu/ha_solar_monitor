@@ -1,0 +1,33 @@
+# Deye SG0XHP3 - Three Phase High Voltage Hybrid Inverter
+# Models: SUN-12K/15K/20K-SG04HP3-EU
+
+metadata:
+  manufacturer: "Deye"
+  model: "SG0XHP3"
+  description: "Three Phase High Voltage Hybrid Inverter (12-20kW)"
+  voltage: "HV"
+  supported_models:
+    - "SUN-12K-SG04HP3-EU"
+    - "SUN-15K-SG04HP3-EU"
+    - "SUN-20K-SG04HP3-EU"
+
+communication:
+  default_port: 8899
+  default_modbus_id: 1
+  default_timeout: 10
+  default_batch_size: 80
+  driver: "pymodbus"
+
+# Include common sensor packages
+includes:
+  - deye/common/battery.yaml
+  - deye/common/pv1.yaml
+  - deye/common/pv2.yaml
+  - deye/common/pv3.yaml
+  - deye/common/pv.yaml  # Contains daily/total production
+  - deye/common/grid_3p.yaml
+  - deye/common/load_3p.yaml
+  - deye/common/inverter.yaml
+
+# HV-specific sensors (if different from LV)
+sensors: {}

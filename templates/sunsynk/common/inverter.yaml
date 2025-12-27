@@ -1,0 +1,47 @@
+# Common inverter sensors for Deye/Sunsynk inverters
+# Used by: SG0XLP1, SG0XLP3, SG0XHP3
+
+sensors:
+  inverter_power:
+    address: 175
+    name: "Inverter Power"
+    unit: "W"
+    factor: -1  # Signed value
+    icon: "mdi:power-plug"
+    device_class: "power"
+    state_class: "measurement"
+  
+  inverter_voltage:
+    address: 154
+    name: "Inverter Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:flash"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  inverter_current:
+    address: 164
+    name: "Inverter Current"
+    unit: "A"
+    factor: 0.01
+    icon: "mdi:current-ac"
+    device_class: "current"
+    state_class: "measurement"
+  
+  inverter_frequency:
+    address: 193
+    name: "Inverter Frequency"
+    unit: "Hz"
+    factor: 0.01
+    icon: "mdi:sine-wave"
+    state_class: "measurement"
+  
+  inverter_temperature:
+    address: 90
+    name: "Inverter Temperature"
+    unit: "°C"
+    factor: 0.1
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"

@@ -1,0 +1,28 @@
+# PV2 sensors for Deye inverters
+sensors:
+  pv2_voltage:
+    address: 111
+    name: "PV2 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+
+  pv2_current:
+    address: 112
+    name: "PV2 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+
+  pv2_power:
+    address: 187
+    name: "PV2 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
