@@ -1,0 +1,67 @@
+name: Solar Monitor
+version: "1.0.4"
+slug: solar_monitor
+description: Monitor solar inverters and publish data to Home Assistant
+url: https://github.com/Pugi/ha_solar_monitor
+services:
+  - mqtt:need
+hassio_api: true
+hassio_role: default
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+  - i386
+init: false
+startup: application
+boot: auto
+host_network: true
+schema:
+  inverters:
+    - name: str
+      profile: list(Deye_SG03LP1|Deye_SG03LP3)
+      driver: list(pymodbus|umodbus|solarman)
+      serial_number: str
+      dongle_serial_number: str
+      ha_prefix: str
+      path: str
+      modbus_id: int(0,16)
+  mqtt:
+    host: str
+    port: int
+    username: str
+    password: str
+    discovery_prefix: str
+  debug: int
+  log_level: str
+options:
+  inverters:
+    - name: "DeyeMaster"
+      profile: "Deye_SG03LP1"
+      driver: "pymodbus"
+      serial_number: "2409054196"
+      dongle_serial_number: ""
+      ha_prefix: "deye_master_"
+      path: "tcp://host.docker.internal:1502"
+      modbus_id: 1
+    - name: "DeyeSlave"
+      profile: "Deye_SG03LP1"
+      driver: "pymodbus"
+      serial_number: "2408073532"
+      dongle_serial_number: ""
+      ha_prefix: "deye_slave_"
+      path: "tcp://host.docker.internal:1502"
+      modbus_id: 2
+  mqtt:
+    host: "core-mosquitto"
+    port: 1883
+    username: ""
+    password: ""
+    discovery_prefix: "homeassistant"
+  debug: 0
+  log_level: "info"
+map:
+  - share:rw
+ports:
+  22/tcp: 2222

@@ -1,0 +1,38 @@
+# Example Custom Inverter Template
+# Copy this file and modify for your inverter
+
+metadata:
+  manufacturer: "CustomBrand"
+  model: "EXAMPLE"
+  description: "Example custom inverter template"
+  voltage: "LV"  # "LV" (Low Voltage) or "HV" (High Voltage)
+  supported_models:
+    - "CustomBrand Model X"
+    - "CustomBrand Model Y"
+
+communication:
+  default_port: 8899
+  default_modbus_id: 1
+  default_timeout: 10
+  default_batch_size: 60
+  driver: "pymodbus"
+
+# Option 1: Include common sensor packages
+includes:
+  - custom/common/battery.yaml
+  - custom/common/pv.yaml
+  - custom/common/grid_1p.yaml
+  - custom/common/load_1p.yaml
+  - custom/common/inverter.yaml
+
+# Option 2: Define sensors directly here
+sensors:
+  # Example sensor definition
+  # battery_voltage:
+  #   address: 183
+  #   name: "Battery Voltage"
+  #   unit: "V"
+  #   factor: 0.01
+  #   icon: "mdi:battery"
+  #   device_class: "voltage"
+  #   state_class: "measurement"

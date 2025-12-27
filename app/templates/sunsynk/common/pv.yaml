@@ -1,0 +1,132 @@
+# Common PV sensors for Sunsynk inverters
+# Used by: SG0XLP1
+# Location: templates/sunsynk/common/pv.yaml
+# Note: Sunsynk uses same registers as Deye (rebranded)
+
+sensors:
+  pv1_voltage:
+    address: 109
+    name: "PV1 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv1_current:
+    address: 110
+    name: "PV1 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv1_power:
+    address: 186
+    name: "PV1 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  pv2_voltage:
+    address: 111
+    name: "PV2 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv2_current:
+    address: 112
+    name: "PV2 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv2_power:
+    address: 187
+    name: "PV2 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  pv3_voltage:
+    address: 113
+    name: "PV3 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv3_current:
+    address: 114
+    name: "PV3 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv3_power:
+    address: 188
+    name: "PV3 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  pv4_voltage:
+    address: 115
+    name: "PV4 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv4_current:
+    address: 116
+    name: "PV4 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv4_power:
+    address: 189
+    name: "PV4 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  daily_pv_production:
+    address: 108
+    name: "Daily PV Production"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  total_pv_production:
+    address: [96, 97]
+    name: "Total PV Production"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true

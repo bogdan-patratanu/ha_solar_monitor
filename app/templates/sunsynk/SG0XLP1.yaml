@@ -1,0 +1,30 @@
+# Sunsynk SG0XLP1 - Single Phase Low Voltage Hybrid Inverter
+# Models: SUNSYNK-3.6K/5K/5.5K/8K-SG03LP1
+
+metadata:
+  manufacturer: "Sunsynk"
+  model: "SG0XLP1"
+  description: "Single Phase Low Voltage Hybrid Inverter (3.6-8kW)"
+  voltage: "LV"
+  supported_models:
+    - "SUNSYNK-3.6K-SG03LP1"
+    - "SUNSYNK-5K-SG03LP1"
+    - "SUNSYNK-5.5K-SG03LP1"
+    - "SUNSYNK-8K-SG03LP1"
+
+communication:
+  default_port: 8899
+  default_modbus_id: 1
+  default_timeout: 10
+  default_batch_size: 60
+  driver: "pymodbus"
+
+# Sunsynk uses same registers as Deye (rebranded)
+includes:
+  - sunsynk/common/battery.yaml
+  - sunsynk/common/pv.yaml
+  - sunsynk/common/grid_1p.yaml
+  - sunsynk/common/load_1p.yaml
+  - sunsynk/common/inverter.yaml
+
+sensors: {}

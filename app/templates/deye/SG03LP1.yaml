@@ -1,0 +1,30 @@
+# Deye SG0XLP1 - Single Phase Low Voltage Hybrid Inverter
+# Models: SUN-3K/5K/6K/8K-SG03LP1-EU
+
+metadata:
+  manufacturer: "Deye"
+  model: "SG03LP1"
+  description: "Single Phase Low Voltage Hybrid Inverter (3-8kW)"
+  voltage: "LV"
+  supported_models:
+    - "SUN-3K-SG03LP1-EU"
+    - "SUN-5K-SG03LP1-EU"
+    - "SUN-6K-SG03LP1-EU"
+    - "SUN-8K-SG03LP1-EU"
+connection:
+  timeout: 10
+  batch_size: 10
+
+
+# Include common sensor packages
+includes:
+  - deye/common/battery.yaml
+  - deye/common/pv1.yaml
+  - deye/common/pv2.yaml
+  - deye/common/pv.yaml
+  - deye/common/grid_1p.yaml
+  - deye/common/load_1p.yaml
+  - deye/common/inverter.yaml
+
+# Additional model-specific sensors (if any)
+sensors: {}

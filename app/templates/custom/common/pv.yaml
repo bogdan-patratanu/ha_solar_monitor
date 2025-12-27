@@ -1,0 +1,77 @@
+# Custom PV sensors
+# Modify register addresses and scaling factors for your inverter
+# Location: templates/custom/common/pv.yaml
+
+sensors:
+  pv1_voltage:
+    address: 109  # CHANGE THIS
+    name: "PV1 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv1_current:
+    address: 110  # CHANGE THIS
+    name: "PV1 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv1_power:
+    address: 186  # CHANGE THIS
+    name: "PV1 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  pv2_voltage:
+    address: 111  # CHANGE THIS
+    name: "PV2 Voltage"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:solar-panel"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  pv2_current:
+    address: 112  # CHANGE THIS
+    name: "PV2 Current"
+    unit: "A"
+    factor: 0.1
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  pv2_power:
+    address: 187  # CHANGE THIS
+    name: "PV2 Power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+  
+  daily_pv_production:
+    address: 108  # CHANGE THIS
+    name: "Daily PV Production"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  total_pv_production:
+    address: [96, 97]  # CHANGE THIS - 32-bit value
+    name: "Total PV Production"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true

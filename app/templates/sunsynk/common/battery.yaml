@@ -1,0 +1,89 @@
+# Common battery sensors for Sunsynk inverters
+# Used by: SG0XLP1
+# Location: templates/sunsynk/common/battery.yaml
+# Note: Sunsynk uses same registers as Deye (rebranded)
+
+sensors:
+  battery_voltage:
+    address: 183
+    name: "Battery Voltage"
+    unit: "V"
+    factor: 0.01
+    icon: "mdi:battery"
+    device_class: "voltage"
+    state_class: "measurement"
+  
+  battery_soc:
+    address: 184
+    name: "Battery SOC"
+    unit: "%"
+    factor: 1
+    icon: "mdi:battery"
+    device_class: "battery"
+    state_class: "measurement"
+  
+  battery_power:
+    address: 190
+    name: "Battery Power"
+    unit: "W"
+    factor: -1  # Signed value
+    icon: "mdi:battery-charging"
+    device_class: "power"
+    state_class: "measurement"
+  
+  battery_current:
+    address: 191
+    name: "Battery Current"
+    unit: "A"
+    factor: -0.01  # Signed value
+    icon: "mdi:current-dc"
+    device_class: "current"
+    state_class: "measurement"
+  
+  battery_temperature:
+    address: 182
+    name: "Battery Temperature"
+    unit: "°C"
+    factor: 0.1
+    offset: -1000
+    icon: "mdi:thermometer"
+    device_class: "temperature"
+    state_class: "measurement"
+  
+  daily_battery_charge:
+    address: 70
+    name: "Daily Battery Charge"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:battery-charging"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  daily_battery_discharge:
+    address: 71
+    name: "Daily Battery Discharge"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:battery-minus"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  total_battery_charge:
+    address: [72, 73]
+    name: "Total Battery Charge"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:battery-charging-100"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true
+  
+  total_battery_discharge:
+    address: [74, 75]
+    name: "Total Battery Discharge"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:battery-arrow-down"
+    device_class: "energy"
+    state_class: "total_increasing"
+    is_32bit: true
