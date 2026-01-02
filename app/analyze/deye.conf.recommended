@@ -1,0 +1,65 @@
+#############################################
+#                                           #
+#    Recommended mbusd config for Deye      #
+#                                           #
+#############################################
+
+########## Logging settings #############
+
+# Logging verbosity level (0 = errors only, 1 = warnings, 2 = info, 3 = debug, 9 = max debug)
+# Set to 9 for maximum debugging
+loglevel = 9
+
+# Logfile (fully-qualified path, or filename [stored at /var/log/] or - for STDOUT only)
+logfile = /var/log/mbusd-deye.log
+
+########## Serial port settings #############
+
+# Serial port device name
+device = /dev/serial/by-path/pci-0000:00:10.0-usb-0:3:1.0-port0
+
+# Serial port speed
+speed = 9600
+
+# Serial port mode
+mode = 8n1
+
+# Enable RS-485 support for given serial port device (Linux only)
+# enable_rs485 = no
+
+# RS-485 data direction control type (addc, rts_0, rts/rts_1, sysfs_0, sysfs_1)
+trx_control = addc
+
+# Sysfs file to use to control data direction
+# trx_sysfile =
+
+############# TCP port settings #############
+
+# TCP server address to bind
+address = 0.0.0.0
+
+# TCP server port number
+port = 502
+
+# Maximum number of simultaneous TCP connections
+maxconn = 32
+
+# Connection timeout value in seconds
+timeout = 60
+
+######### Request/response settings #########
+
+# Maximum number of request retries
+retries = 3
+
+# Pause between requests in milliseconds
+# CHANGED: Increased from 100 to 200 for slower devices
+pause = 200
+
+# Response wait time in milliseconds
+# CHANGED: Increased from 500 to 2000 (2 seconds) for Deye inverter
+# This is the critical parameter - Deye inverters can be slow to respond
+wait = 2000
+
+# Reply on Broadcast
+replyonbroadcast = no

@@ -4,15 +4,17 @@
 sensors:
   inverter_power:
     address: 175
+    data_type: int16
     name: "Inverter Power"
     unit: "W"
-    factor: -1  # Signed value
+    factor: 1  # Signed value
     icon: "mdi:power-plug"
     device_class: "power"
     state_class: "measurement"
   
   inverter_voltage:
     address: 154
+    data_type: uint16
     name: "Inverter Voltage"
     unit: "V"
     factor: 0.1
@@ -22,6 +24,7 @@ sensors:
   
   inverter_current:
     address: 164
+    data_type: uint16
     name: "Inverter Current"
     unit: "A"
     factor: 0.01
@@ -31,6 +34,7 @@ sensors:
   
   inverter_frequency:
     address: 193
+    data_type: uint16
     name: "Inverter Frequency"
     unit: "Hz"
     factor: 0.01
@@ -39,6 +43,7 @@ sensors:
   
   inverter_temperature:
     address: 90
+    data_type: uint16
     name: "Inverter Temperature"
     unit: "°C"
     factor: 0.1

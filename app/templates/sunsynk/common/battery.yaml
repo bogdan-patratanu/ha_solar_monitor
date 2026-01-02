@@ -6,6 +6,7 @@
 sensors:
   battery_voltage:
     address: 183
+    data_type: uint16
     name: "Battery Voltage"
     unit: "V"
     factor: 0.01
@@ -15,6 +16,7 @@ sensors:
   
   battery_soc:
     address: 184
+    data_type: uint16
     name: "Battery SOC"
     unit: "%"
     factor: 1
@@ -24,24 +26,27 @@ sensors:
   
   battery_power:
     address: 190
+    data_type: int16
     name: "Battery Power"
     unit: "W"
-    factor: -1  # Signed value
+    factor: 1  # Signed value
     icon: "mdi:battery-charging"
     device_class: "power"
     state_class: "measurement"
   
   battery_current:
     address: 191
+    data_type: int16
     name: "Battery Current"
     unit: "A"
-    factor: -0.01  # Signed value
+    factor: 0.01  # Signed value
     icon: "mdi:current-dc"
     device_class: "current"
     state_class: "measurement"
   
   battery_temperature:
     address: 182
+    data_type: uint16
     name: "Battery Temperature"
     unit: "°C"
     factor: 0.1
@@ -52,6 +57,7 @@ sensors:
   
   daily_battery_charge:
     address: 70
+    data_type: uint16
     name: "Daily Battery Charge"
     unit: "kWh"
     factor: 0.1
@@ -61,6 +67,7 @@ sensors:
   
   daily_battery_discharge:
     address: 71
+    data_type: uint16
     name: "Daily Battery Discharge"
     unit: "kWh"
     factor: 0.1
@@ -70,20 +77,20 @@ sensors:
   
   total_battery_charge:
     address: [72, 73]
+    data_type: uint32
     name: "Total Battery Charge"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:battery-charging-100"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true
   
   total_battery_discharge:
     address: [74, 75]
+    data_type: uint32
     name: "Total Battery Discharge"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:battery-arrow-down"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true

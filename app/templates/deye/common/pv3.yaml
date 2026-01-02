@@ -1,7 +1,8 @@
 # PV3 sensors for Deye inverters
 sensors:
   pv3_voltage:
-    address: 113
+    address: 680
+    data_type: uint16
     name: "PV3 Voltage"
     unit: "V"
     factor: 0.1
@@ -10,7 +11,8 @@ sensors:
     state_class: "measurement"
 
   pv3_current:
-    address: 114
+    address: 681
+    data_type: uint16
     name: "PV3 Current"
     unit: "A"
     factor: 0.1
@@ -19,7 +21,8 @@ sensors:
     state_class: "measurement"
 
   pv3_power:
-    address: 188
+    address: 674
+    data_type: uint16
     name: "PV3 Power"
     unit: "W"
     factor: 1

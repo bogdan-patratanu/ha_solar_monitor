@@ -1,7 +1,8 @@
 # PV1 sensors for Deye inverters
 sensors:
   pv1_voltage:
-    address: 109
+    address: 676
+    data_type: uint16
     name: "PV1 Voltage"
     unit: "V"
     factor: 0.1
@@ -10,7 +11,8 @@ sensors:
     state_class: "measurement"
 
   pv1_current:
-    address: 110
+    address: 677
+    data_type: uint16
     name: "PV1 Current"
     unit: "A"
     factor: 0.1
@@ -19,7 +21,8 @@ sensors:
     state_class: "measurement"
 
   pv1_power:
-    address: 186
+    address: 672
+    data_type: uint16
     name: "PV1 Power"
     unit: "W"
     factor: 1

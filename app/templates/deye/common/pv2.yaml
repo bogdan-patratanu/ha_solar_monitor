@@ -1,7 +1,8 @@
 # PV2 sensors for Deye inverters
 sensors:
   pv2_voltage:
-    address: 111
+    address: 678
+    data_type: uint16
     name: "PV2 Voltage"
     unit: "V"
     factor: 0.1
@@ -10,7 +11,8 @@ sensors:
     state_class: "measurement"
 
   pv2_current:
-    address: 112
+    address: 679
+    data_type: uint16
     name: "PV2 Current"
     unit: "A"
     factor: 0.1
@@ -19,7 +21,8 @@ sensors:
     state_class: "measurement"
 
   pv2_power:
-    address: 187
+    address: 673
+    data_type: uint16
     name: "PV2 Power"
     unit: "W"
     factor: 1

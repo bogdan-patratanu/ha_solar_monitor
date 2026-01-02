@@ -1,7 +1,8 @@
 # PV4 sensors for Deye inverters
 sensors:
   pv4_voltage:
-    address: 115
+    address: 682
+    data_type: uint16
     name: "PV4 Voltage"
     unit: "V"
     factor: 0.1
@@ -10,7 +11,8 @@ sensors:
     state_class: "measurement"
 
   pv4_current:
-    address: 116
+    address: 683
+    data_type: uint16
     name: "PV4 Current"
     unit: "A"
     factor: 0.1
@@ -19,7 +21,8 @@ sensors:
     state_class: "measurement"
 
   pv4_power:
-    address: 189
+    address: 675
+    data_type: uint16
     name: "PV4 Power"
     unit: "W"
     factor: 1

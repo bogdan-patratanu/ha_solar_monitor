@@ -3,17 +3,19 @@
 import asyncio
 import logging
 from typing import Dict, Any, Optional
-from pymodbus.exceptions import ModbusException
+import asyncio
 import traceback
+from pymodbus.exceptions import ModbusException
 from drivers.driver_pool import get_shared_driver
-from drivers import pymodbus_driver, umodbus_driver, solarman_driver  # Import driver modules
+from parsers.register_parser import RegisterConfig, ParserFactory
+import logging
 
 logger = logging.getLogger(__name__)
 
 # Driver registry mapping
 DRIVER_REGISTRY = {
-    "modbus_tcp": "pymodbus_driver.PymodbusDriver",
-    "umodbus": "umodbus_driver.UmodbusDriver",
+    "modbusTCP": "pymodbus_driver.PymodbusDriver",
+    "modbusRTU": "pymodbus_driver.PymodbusDriver",
     "solarman": "solarman_driver.SolarmanDriver"
 }
 
@@ -35,7 +37,6 @@ class Equipment:
         metadata = configuration.get('metadata')
         self.name = metadata['name']
         self.model = metadata['model']
-        self.serial_number = metadata['serial_number']
         self.manufacturer = metadata['manufacturer']
 
         connection_config = configuration.get('connection')
@@ -263,6 +264,7 @@ class Equipment:
                     logger.error(f"{self.name}: Error parsing sensor '{sensor_id}': {e}")
                     continue
 
+            
             # Reset error count on successful read
             self.read_errors = 0
             return data
@@ -314,44 +316,11 @@ class Equipment:
             return False
 
     def _parse_sensor_value(self, sensor_def: Dict[str, Any], registers: Dict[int, int]) -> Optional[float]:
-        """Parse a sensor value from registers based on its definition."""
-        address = sensor_def.get('address')
-        factor = sensor_def.get('factor', 1.0)
-
-        if address is None:
-            return None
-
+        """Parse a sensor value from registers using Strategy Pattern parsers."""
         try:
-            if isinstance(address, list):
-                # 32-bit value (two registers)
-                idx1 = address[0]
-                idx2 = address[1]
-
-                if idx1 not in registers or idx2 not in registers:
-                    logger.warning(f"Register address out of range: {address}")
-                    return None
-
-                value = (registers[idx1] << 16 | registers[idx2]) * factor
-            else:
-                # Single register
-                idx = address
-
-                if idx not in registers:
-                    logger.warning(f"Register address out of range: {address}")
-                    return None
-
-                # Handle signed values (negative factor)
-                if factor < 0:
-                    # Treat as signed 16-bit integer
-                    raw_value = registers[idx]
-                    if raw_value > 32767:
-                        raw_value = raw_value - 65536
-                    value = raw_value * abs(factor)
-                else:
-                    value = registers[idx] * factor
-
-            return round(value, 2)
-
+            config = RegisterConfig.from_dict(sensor_def)
+            parser = ParserFactory.get_parser(config.data_type)
+            return parser.parse(registers, config)
         except Exception as e:
-            logger.error(f"Error parsing sensor value: {e}")
+            logger.error(f"Error parsing sensor {sensor_def.get('name', 'unknown')}: {e}")
             return None

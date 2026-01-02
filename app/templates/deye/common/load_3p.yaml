@@ -4,64 +4,154 @@
 
 sensors:
   load_power_l1:
-    address: 176
-    name: "Load Power L1"
+    address: [650, 656]
+    data_type: int32
+    endianness: little
+    name: "Load power L1"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_l2:
-    address: 177
-    name: "Load Power L2"
+    address: [651, 657]
+    data_type: int32
+    endianness: little
+    name: "Load lower L2"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_l3:
-    address: 178
-    name: "Load Power L3"
+    address: [652, 658]
+    data_type: int32
+    endianness: little
+    name: "Load power L3"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_total:
-    address: 178
-    name: "Total Load Power"
+    address: [653, 659]
+    data_type: int32
+    endianness: little
+    name: "Load power total"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
-  load_frequency:
-    address: 192
-    name: "Load Frequency"
-    unit: "Hz"
-    factor: 0.01
-    icon: "mdi:sine-wave"
+  load_consumption_daily:
+    address: 526
+    data_type: uint16
+    name: "Load consumption daily"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "energy"
+    state_class: "total_increasing"
+  
+  load_consumption_total:
+    address: [527, 528]
+    data_type: uint32
+    endianness: little
+    name: "Load consumption total"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "energy"
+    state_class: "total_increasing"
+
+  load_ups_power_l1:
+    address: [640, 696]
+    data_type: int32
+    endianness: little
+    name: "Load UPS power L1"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
     state_class: "measurement"
   
-  daily_load_consumption:
-    address: 84
-    name: "Daily Load Consumption"
-    unit: "kWh"
-    factor: 0.1
+  load_ups_power_l2:
+    address: [641, 697]
+    data_type: int32
+    endianness: little
+    name: "Load UPS power L2"
+    unit: "W"
+    factor: 1
     icon: "mdi:home-lightning-bolt"
-    device_class: "energy"
-    state_class: "total_increasing"
+    device_class: "power"
+    state_class: "measurement"
+
+  load_ups_power_l3:
+    address: [642, 698]
+    data_type: int32
+    endianness: little
+    name: "Load UPS power L3"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"
+
+  load_ups_power_total:
+    address: [643, 699]
+    data_type: int32
+    endianness: little
+    name: "Load UPS power total"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"
   
-  total_load_consumption:
-    address: [88, 89]
-    name: "Total Load Consumption"
-    unit: "kWh"
-    factor: 0.1
+  output_power_l1:
+    address: [633, 691]
+    data_type: int32
+    endianness: little
+    name: "Output power L1"
+    unit: "W"
+    factor: 1
     icon: "mdi:home-lightning-bolt"
-    device_class: "energy"
-    state_class: "total_increasing"
-    is_32bit: true
+    device_class: "power"
+    state_class: "measurement"
+  
+  output_power_l2:
+    address: [634, 692]
+    data_type: int32
+    endianness: little
+    name: "Output power L2"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"
+  
+  output_power_l3:
+    address: [635, 693]
+    data_type: int32
+    endianness: little
+    name: "Output power L3"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"
+  
+  output_power_total:
+    address: [636, 694]
+    data_type: int32
+    endianness: little
+    name: "Output power total"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"

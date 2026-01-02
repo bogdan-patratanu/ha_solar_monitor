@@ -18,6 +18,7 @@ sensors:
   # Battery sensors
   battery_voltage:
     address: 183
+    data_type: uint16
     name: "Battery Voltage"
     unit: "V"
     factor: 0.01
@@ -27,6 +28,7 @@ sensors:
   
   battery_soc:
     address: 184
+    data_type: uint16
     name: "Battery SOC"
     unit: "%"
     factor: 1
@@ -36,24 +38,27 @@ sensors:
   
   battery_power:
     address: 190
+    data_type: int16
     name: "Battery Power"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:battery-charging"
     device_class: "power"
     state_class: "measurement"
   
   battery_current:
     address: 191
+    data_type: int16
     name: "Battery Current"
     unit: "A"
-    factor: -0.01
+    factor: 0.01
     icon: "mdi:current-dc"
     device_class: "current"
     state_class: "measurement"
   
   battery_temperature:
     address: 182
+    data_type: uint16
     name: "Battery Temperature"
     unit: "°C"
     factor: 0.1
@@ -64,6 +69,7 @@ sensors:
   # PV sensors
   pv_voltage:
     address: 109
+    data_type: uint16
     name: "PV1 Voltage"
     unit: "V"
     factor: 0.1
@@ -73,6 +79,7 @@ sensors:
   
   pv_current:
     address: 110
+    data_type: uint16
     name: "PV1 Current"
     unit: "A"
     factor: 0.1
@@ -82,6 +89,7 @@ sensors:
   
   pv_power:
     address: 186
+    data_type: uint16
     name: "PV Power"
     unit: "W"
     factor: 1
@@ -91,6 +99,7 @@ sensors:
   
   pv2_voltage:
     address: 111
+    data_type: uint16
     name: "PV2 Voltage"
     unit: "V"
     factor: 0.1
@@ -100,6 +109,7 @@ sensors:
   
   pv2_current:
     address: 112
+    data_type: uint16
     name: "PV2 Current"
     unit: "A"
     factor: 0.1
@@ -110,15 +120,17 @@ sensors:
   # Inverter sensors
   inverter_power:
     address: 175
+    data_type: int16
     name: "Inverter Power"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:power-plug"
     device_class: "power"
     state_class: "measurement"
   
   inverter_voltage:
     address: 154
+    data_type: uint16
     name: "Inverter Voltage"
     unit: "V"
     factor: 0.1
@@ -128,6 +140,7 @@ sensors:
   
   inverter_current:
     address: 164
+    data_type: uint16
     name: "Inverter Current"
     unit: "A"
     factor: 0.01
@@ -137,6 +150,7 @@ sensors:
   
   inverter_frequency:
     address: 193
+    data_type: uint16
     name: "Inverter Frequency"
     unit: "Hz"
     factor: 0.01
@@ -146,6 +160,7 @@ sensors:
   # Grid sensors
   grid_voltage:
     address: 150
+    data_type: uint16
     name: "Grid Voltage"
     unit: "V"
     factor: 0.1
@@ -155,6 +170,7 @@ sensors:
   
   grid_frequency:
     address: 79
+    data_type: uint16
     name: "Grid Frequency"
     unit: "Hz"
     factor: 0.01
@@ -163,15 +179,17 @@ sensors:
   
   grid_power:
     address: 169
+    data_type: int16
     name: "Grid Power"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
   
   grid_current:
     address: 160
+    data_type: uint16
     name: "Grid Current"
     unit: "A"
     factor: 0.01
@@ -182,15 +200,17 @@ sensors:
   # Load sensors
   load_power:
     address: 178
+    data_type: int16
     name: "Load Power"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_frequency:
     address: 192
+    data_type: uint16
     name: "Load Frequency"
     unit: "Hz"
     factor: 0.01
@@ -200,6 +220,7 @@ sensors:
   # Energy sensors
   daily_energy:
     address: 108
+    data_type: uint16
     name: "Daily Energy"
     unit: "kWh"
     factor: 0.1
@@ -209,16 +230,18 @@ sensors:
   
   total_energy:
     address: [96, 97]
+    data_type: uint32
+    endianness: little
     name: "Total Energy"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:solar-power"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true
   
   daily_battery_charge:
     address: 516
+    data_type: uint16
     name: "Daily Battery Charge"
     unit: "kWh"
     factor: 0.1
@@ -228,6 +251,7 @@ sensors:
   
   daily_battery_discharge:
     address: 517
+    data_type: uint16
     name: "Daily Battery Discharge"
     unit: "kWh"
     factor: 0.1
@@ -238,6 +262,7 @@ sensors:
   # Temperature sensors
   temperature:
     address: 90
+    data_type: uint16
     name: "Inverter Temperature"
     unit: "°C"
     factor: 0.1

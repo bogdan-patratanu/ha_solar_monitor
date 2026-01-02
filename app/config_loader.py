@@ -42,17 +42,6 @@ async def load_config(config_path):
             if parsed.port:
                 inv['port'] = parsed.port
             
-            # Determine driver based on scheme
-            scheme = parsed.scheme.lower()
-            if scheme == "tcp":
-                inv['driver'] = "modbus_tcp"
-            elif scheme in ["rtu", "serial"]:
-                inv['driver'] = "modbus_rtu"
-            else:
-                # Default to modbus_tcp for unknown schemes
-                logger.warning(f"Unknown scheme '{scheme}' for inverter {idx+1}, defaulting to modbus_tcp")
-                inv['driver'] = "modbus_tcp"
-            
             # Load template for this inverter using profile
             template = template_loader.load_template(inv['profile'])
             if not template:
