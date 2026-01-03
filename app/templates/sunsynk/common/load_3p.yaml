@@ -4,42 +4,47 @@
 sensors:
   load_power_l1:
     address: 176
+    data_type: int16
     name: "Load Power L1"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_l2:
     address: 177
+    data_type: int16
     name: "Load Power L2"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_l3:
     address: 178
+    data_type: int16
     name: "Load Power L3"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_power_total:
     address: 178
+    data_type: int16
     name: "Total Load Power"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
   load_frequency:
     address: 192
+    data_type: uint16
     name: "Load Frequency"
     unit: "Hz"
     factor: 0.01
@@ -48,6 +53,7 @@ sensors:
   
   daily_load_consumption:
     address: 84
+    data_type: uint16
     name: "Daily Load Consumption"
     unit: "kWh"
     factor: 0.1
@@ -57,10 +63,10 @@ sensors:
   
   total_load_consumption:
     address: [88, 89]
+    data_type: uint32
     name: "Total Load Consumption"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:home-lightning-bolt"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true

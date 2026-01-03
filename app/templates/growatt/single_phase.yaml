@@ -18,6 +18,7 @@ sensors:
   # PV sensors
   pv_voltage:
     address: 3
+    data_type: uint16
     name: "PV1 Voltage"
     unit: "V"
     factor: 0.1
@@ -27,6 +28,7 @@ sensors:
   
   pv_current:
     address: 4
+    data_type: uint16
     name: "PV1 Current"
     unit: "A"
     factor: 0.1
@@ -36,6 +38,7 @@ sensors:
   
   pv_power:
     address: 5
+    data_type: uint16
     name: "PV1 Power"
     unit: "W"
     factor: 0.1
@@ -45,6 +48,7 @@ sensors:
   
   pv2_voltage:
     address: 7
+    data_type: uint16
     name: "PV2 Voltage"
     unit: "V"
     factor: 0.1
@@ -54,6 +58,7 @@ sensors:
   
   pv2_current:
     address: 8
+    data_type: uint16
     name: "PV2 Current"
     unit: "A"
     factor: 0.1
@@ -63,6 +68,7 @@ sensors:
   
   pv2_power:
     address: 9
+    data_type: uint16
     name: "PV2 Power"
     unit: "W"
     factor: 0.1
@@ -73,6 +79,7 @@ sensors:
   # Battery sensors
   battery_voltage:
     address: 13
+    data_type: uint16
     name: "Battery Voltage"
     unit: "V"
     factor: 0.1
@@ -82,6 +89,7 @@ sensors:
   
   battery_soc:
     address: 14
+    data_type: uint16
     name: "Battery SOC"
     unit: "%"
     factor: 1
@@ -91,6 +99,7 @@ sensors:
   
   battery_power:
     address: 1009
+    data_type: uint16
     name: "Battery Power"
     unit: "W"
     factor: 1
@@ -100,6 +109,7 @@ sensors:
   
   battery_current:
     address: 1011
+    data_type: uint16
     name: "Battery Current"
     unit: "A"
     factor: 0.1
@@ -110,6 +120,7 @@ sensors:
   # Grid sensors
   grid_voltage:
     address: 38
+    data_type: uint16
     name: "Grid Voltage"
     unit: "V"
     factor: 0.1
@@ -119,6 +130,7 @@ sensors:
   
   grid_frequency:
     address: 37
+    data_type: uint16
     name: "Grid Frequency"
     unit: "Hz"
     factor: 0.01
@@ -127,6 +139,7 @@ sensors:
   
   grid_power:
     address: 1021
+    data_type: uint16
     name: "Grid Power"
     unit: "W"
     factor: 1
@@ -137,6 +150,7 @@ sensors:
   # Load sensors
   load_power:
     address: 1037
+    data_type: uint16
     name: "Load Power"
     unit: "W"
     factor: 1
@@ -147,6 +161,7 @@ sensors:
   # Inverter output
   inverter_power:
     address: 1029
+    data_type: uint16
     name: "Inverter Power"
     unit: "W"
     factor: 1
@@ -157,6 +172,7 @@ sensors:
   # Energy sensors
   daily_energy:
     address: 53
+    data_type: uint16
     name: "Today Generation"
     unit: "kWh"
     factor: 0.1
@@ -166,17 +182,18 @@ sensors:
   
   total_energy:
     address: [55, 56]
+    data_type: uint32
     name: "Total Generation"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:solar-power"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true
 
   # Temperature
   temperature:
     address: 93
+    data_type: uint16
     name: "Inverter Temperature"
     unit: "°C"
     factor: 0.1

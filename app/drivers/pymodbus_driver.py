@@ -34,7 +34,6 @@ class PymodbusDriver(ModbusDriver):
         return await self.client.read_holding_registers(
             address=address,
             count=count,
-            slave=slave
         )
     
     async def _execute_request(self, request):

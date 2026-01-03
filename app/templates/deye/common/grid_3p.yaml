@@ -3,142 +3,208 @@
 # Location: templates/deye/common/grid_3p.yaml
 
 sensors:
-  # Phase L1
   grid_voltage_l1:
-    address: 150
-    name: "Grid Voltage L1"
+    address: 598
+    data_type: uint16
+    name: "Grid voltage L1"
     unit: "V"
     factor: 0.1
     icon: "mdi:transmission-tower"
     device_class: "voltage"
     state_class: "measurement"
   
-  grid_current_l1:
-    address: 160
-    name: "Grid Current L1"
-    unit: "A"
-    factor: 0.01
-    icon: "mdi:current-ac"
-    device_class: "current"
+  grid_voltage_l2:
+    address: 599
+    data_type: uint16
+    name: "Grid voltage L2"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:transmission-tower"
+    device_class: "voltage"
     state_class: "measurement"
-  
-  grid_power_l1:
-    address: 167
-    name: "Grid Power L1"
+
+  grid_voltage_l3:
+    address: 600
+    data_type: uint16
+    name: "Grid voltage L3"
+    unit: "V"
+    factor: 0.1
+    icon: "mdi:transmission-tower"
+    device_class: "voltage"
+    state_class: "measurement"
+
+  internal_ct_power_l1:
+    address: [604, 700]
+    data_type: int32
+    endianness: little
+    name: "Internal CT power L1"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
   
-  # Phase L2
-  grid_voltage_l2:
-    address: 151
-    name: "Grid Voltage L2"
-    unit: "V"
-    factor: 0.1
+  internal_ct_power_l2:
+    address: [605, 701]
+    data_type: int32
+    endianness: little
+    name: "Internal CT power L2"
+    unit: "W"
+    factor: 1
     icon: "mdi:transmission-tower"
-    device_class: "voltage"
+    device_class: "power"
+    state_class: "measurement"
+
+  internal_ct_power_l3:
+    address: [606, 702]
+    data_type: int32
+    endianness: little
+    name: "Internal CT power L3"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+
+  internal_ct_power_total:
+    address: [607, 703]
+    data_type: int32
+    endianness: little
+    name: "Internal CT power total"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+
+  external_ct_power_l1:
+    address: [616, 705]
+    data_type: int32
+    endianness: little
+    name: "External CT power L1"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
     state_class: "measurement"
   
-  grid_current_l2:
-    address: 161
-    name: "Grid Current L2"
-    unit: "A"
-    factor: 0.01
-    icon: "mdi:current-ac"
-    device_class: "current"
+  external_ct_power_l2:
+    address: [617, 706]
+    data_type: int32
+    endianness: little
+    name: "External CT power L2"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+
+  external_ct_power_l3:
+    address: [618, 707]
+    data_type: int32
+    endianness: little
+    name: "External CT power L3"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+
+  external_ct_power_total:
+    address: [619, 708]
+    data_type: int32
+    endianness: little
+    name: "External CT power total"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
+    state_class: "measurement"
+
+  grid_power_l1:
+    address: [622, 687]
+    data_type: int32
+    endianness: little
+    name: "Grid power L1"
+    unit: "W"
+    factor: 1
+    icon: "mdi:transmission-tower"
+    device_class: "power"
     state_class: "measurement"
   
   grid_power_l2:
-    address: 168
-    name: "Grid Power L2"
+    address: [623, 688]
+    data_type: int32
+    endianness: little
+    name: "Grid power L2"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
-  
-  # Phase L3
-  grid_voltage_l3:
-    address: 152
-    name: "Grid Voltage L3"
-    unit: "V"
-    factor: 0.1
-    icon: "mdi:transmission-tower"
-    device_class: "voltage"
-    state_class: "measurement"
-  
-  grid_current_l3:
-    address: 162
-    name: "Grid Current L3"
-    unit: "A"
-    factor: 0.01
-    icon: "mdi:current-ac"
-    device_class: "current"
-    state_class: "measurement"
-  
+
   grid_power_l3:
-    address: 169
-    name: "Grid Power L3"
+    address: [624, 689]
+    data_type: int32
+    endianness: little
+    name: "Grid power L3"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
-  
-  # Total
+
   grid_power_total:
-    address: 169
-    name: "Total Grid Power"
+    address: [625, 690]
+    data_type: int32
+    endianness: little
+    name: "Grid power total"
     unit: "W"
-    factor: -1
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
-  
-  grid_frequency:
-    address: 79
-    name: "Grid Frequency"
-    unit: "Hz"
-    factor: 0.01
-    icon: "mdi:sine-wave"
-    state_class: "measurement"
-  
-  daily_grid_export:
-    address: 81
-    name: "Daily Grid Export"
+
+  grid_export_daily:
+    address: 521
+    data_type: uint16
+    name: "Grid export daily"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:transmission-tower-export"
     device_class: "energy"
     state_class: "total_increasing"
   
-  daily_grid_import:
-    address: 76
-    name: "Daily Grid Import"
+  grid_import_daily:
+    address: 520
+    data_type: uint16
+    name: "Grid import daily"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:transmission-tower-import"
     device_class: "energy"
     state_class: "total_increasing"
   
-  total_grid_export:
-    address: [86, 87]
-    name: "Total Grid Export"
+  grid_export_total:
+    address: [524, 525]
+    data_type: uint32
+    endianness: little
+    name: "Grid export total"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:transmission-tower-export"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true
   
-  total_grid_import:
-    address: [78, 79]
-    name: "Total Grid Import"
+  grid_import_total:
+    address: [522, 523]
+    data_type: uint32
+    endianness: little
+    name: "Grid import total"
     unit: "kWh"
     factor: 0.1
     icon: "mdi:transmission-tower-import"
     device_class: "energy"
     state_class: "total_increasing"
-    is_32bit: true
+
+  

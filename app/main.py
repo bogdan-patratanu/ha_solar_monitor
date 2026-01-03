@@ -92,15 +92,17 @@ async def main_loop():
         connections_pool = {}
         equipments = []
         for idx, inv_config in enumerate(config['inverters']):
+
+            inv_profile = inv_config['profile']
             inv_modbus = inv_config['modbus_id']
             inv_name = inv_config['name']
             inv_path = inv_config['path']
             inv_driver = inv_config['driver']
 
             # Create driver based on protocol
-            if inv_driver == "modbus_tcp":
+            if inv_driver == "modbusTCP":
                 driver_class = PymodbusDriver
-            elif inv_driver == "umodbus":
+            elif inv_driver == "modbusRTU":
                 driver_class = UmodbusDriver
             elif inv_driver == "solarman":
                 driver_class = SolarmanDriver
@@ -127,14 +129,13 @@ async def main_loop():
                 driver_instance = driver_class()
                 connections_pool[host_port] = driver_instance
 
-            template = load_inverter_template(inv_config.get('profile'))
+            template = load_inverter_template(inv_profile)
             if template is None:
-                logger.error(f"Failed to load template for profile {inv_config.get('profile')}")
+                logger.error(f"Failed to load template for profile {inv_profile}")
                 continue
 
             inverter_configuration = template.copy()
             inverter_configuration['metadata']['name'] = inv_name
-            inverter_configuration['metadata']['serial_number'] = inv_config.get('serial_number')
             inverter_configuration['metadata']['ha_prefix'] = inv_config.get('ha_prefix')
 
             inverter_configuration['connection']['host'] = host

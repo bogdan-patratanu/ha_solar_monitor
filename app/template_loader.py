@@ -25,7 +25,7 @@ class TemplateLoader:
         # Define profile to template path mapping
         self.profile_map = {
             "Deye_SG03LP1": "deye/SG03LP1.yaml",
-            "Deye_SG03LP3": "deye/SG03LP3.yaml",
+            "Deye_SG04LP3": "deye/SG04LP3.yaml",
             # Add more mappings as needed
         }
         
@@ -111,16 +111,26 @@ class TemplateLoader:
                 with open(include_file, 'r', encoding='utf-8') as f:
                     include_data = yaml.safe_load(f)
                 
+                # Skip if include_data is None or doesn't contain sensors
+                if not include_data or not isinstance(include_data, dict) or 'sensors' not in include_data:
+                    logger.warning(f"Include file {include_path} is empty or invalid - skipping")
+                    continue
+                
+                # Handle case where sensors might be None
+                sensors = include_data.get('sensors', {})
+                if sensors is None:
+                    logger.warning(f"Include file {include_path} has null sensors - skipping")
+                    continue
+                
                 # Recursively merge sensors from include
-                if 'sensors' in include_data:
-                    for sensor_id, sensor_def in include_data['sensors'].items():
-                        if sensor_id in merged_sensors:
-                            # Merge existing sensor definition with new one
-                            merged_sensors[sensor_id] = {**merged_sensors[sensor_id], **sensor_def}
-                        else:
-                            # Add new sensor definition
-                            merged_sensors[sensor_id] = sensor_def
-                    logger.debug(f"Merged {len(include_data['sensors'])} sensors from {include_path}")
+                for sensor_id, sensor_def in sensors.items():
+                    if sensor_id in merged_sensors:
+                        # Merge existing sensor definition with new one
+                        merged_sensors[sensor_id] = {**merged_sensors[sensor_id], **sensor_def}
+                    else:
+                        # Add new sensor definition
+                        merged_sensors[sensor_id] = sensor_def
+                logger.debug(f"Merged {len(sensors)} sensors from {include_path}")
             except Exception as e:
                 logger.error(f"Error loading include {include_file}: {e}")
                 continue
