@@ -14,7 +14,7 @@ sensors:
     state_class: "measurement"
   
   grid_current:
-    address: 160
+    address: 164
     data_type: uint16
     name: "Grid Current"
     unit: "A"
@@ -28,11 +28,11 @@ sensors:
     data_type: int16
     name: "Grid Power"
     unit: "W"
-    factor: 1  # Signed value
+    factor: 1
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"
-  
+
   grid_frequency:
     address: 79
     data_type: uint16
@@ -43,7 +43,7 @@ sensors:
     state_class: "measurement"
   
   daily_grid_export:
-    address: 81
+    address: 77
     data_type: uint16
     name: "Daily Grid Export"
     unit: "kWh"
@@ -63,7 +63,7 @@ sensors:
     state_class: "total_increasing"
   
   total_grid_export:
-    address: [86, 87]
+    address: [81, 82]
     data_type: uint32
     endianness: little
     name: "Total Grid Export"
@@ -74,7 +74,7 @@ sensors:
     state_class: "total_increasing"
   
   total_grid_import:
-    address: [78, 79]
+    address: [78, 80]
     data_type: uint32
     endianness: little
     name: "Total Grid Import"

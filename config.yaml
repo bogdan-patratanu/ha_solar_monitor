@@ -1,7 +1,7 @@
 name: Solar Monitor
-version: "1.0.4"
+version: "1.0.5"
 slug: solar_monitor
-description: Monitor solar inverters and publish data to Home Assistant
+description: Monitor solar equipments and publish data to Home Assistant
 url: https://github.com/Pugi/ha_solar_monitor
 services:
   - mqtt:need
@@ -51,5 +51,4 @@ options:
   log_level: "info"
 map:
   - share:rw
-ports:
-  22/tcp: 2222
+

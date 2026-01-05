@@ -16,7 +16,7 @@ sensors:
   battery_soc:
     address: 588
     data_type: uint16
-    name: "Battery SOC"
+    name: "Battery SOC from BMS"
     unit: "%"
     factor: 1
     icon: "mdi:battery"

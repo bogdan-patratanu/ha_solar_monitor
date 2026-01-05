@@ -98,8 +98,9 @@ class TemplateLoader:
     def _process_includes(self, template: Dict[str, Any]) -> Dict[str, Any]:
         """Process template includes and merge common sensor packages."""
         includes = template.get('includes', [])
-        merged_sensors = template.get('sensors', {})
+        base_sensors = {}  # Start with empty base
         
+        # First process all includes to gather base sensors
         for include_path in includes:
             include_file = self.templates_dir / include_path
             
@@ -111,32 +112,37 @@ class TemplateLoader:
                 with open(include_file, 'r', encoding='utf-8') as f:
                     include_data = yaml.safe_load(f)
                 
-                # Skip if include_data is None or doesn't contain sensors
                 if not include_data or not isinstance(include_data, dict) or 'sensors' not in include_data:
                     logger.warning(f"Include file {include_path} is empty or invalid - skipping")
                     continue
                 
-                # Handle case where sensors might be None
                 sensors = include_data.get('sensors', {})
                 if sensors is None:
                     logger.warning(f"Include file {include_path} has null sensors - skipping")
                     continue
                 
-                # Recursively merge sensors from include
+                # Merge sensors from include into base
                 for sensor_id, sensor_def in sensors.items():
-                    if sensor_id in merged_sensors:
-                        # Merge existing sensor definition with new one
-                        merged_sensors[sensor_id] = {**merged_sensors[sensor_id], **sensor_def}
+                    if sensor_id in base_sensors:
+                        base_sensors[sensor_id] = {**base_sensors[sensor_id], **sensor_def}
                     else:
-                        # Add new sensor definition
-                        merged_sensors[sensor_id] = sensor_def
+                        base_sensors[sensor_id] = sensor_def
                 logger.debug(f"Merged {len(sensors)} sensors from {include_path}")
             except Exception as e:
                 logger.error(f"Error loading include {include_file}: {e}")
                 continue
         
-        # Update template with merged sensors
-        template['sensors'] = merged_sensors
+        # Now merge current template's sensors (selectively override base)
+        current_sensors = template.get('sensors', {})
+        for sensor_id, sensor_def in current_sensors.items():
+            if sensor_id in base_sensors:
+                # Only update parameters that are present in the current template
+                for key, value in sensor_def.items():
+                    base_sensors[sensor_id][key] = value
+            else:
+                base_sensors[sensor_id] = sensor_def
+        
+        template['sensors'] = base_sensors
         return template
     
     def _validate_template(self, template: Dict[str, Any]) -> bool:

@@ -3,5 +3,34 @@
 # Location: templates/deye/common/pv.yaml
 
 sensors:
-  
+  pv_power_total:
+    address: [672, 673]
+    data_type: sum
+    name: "PV power total"
+    unit: "W"
+    factor: 1
+    icon: "mdi:solar-power-variant"
+    device_class: "power"
+    state_class: "measurement"
+
+  pv_production_daily:
+    address: 529
+    data_type: uint16
+    name: "PV production daily"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"
+
+  pv_production_total:
+    address: [534, 535]
+    data_type: uint32
+    endianness: little
+    name: "PV production total"
+    unit: "kWh"
+    factor: 0.1
+    icon: "mdi:solar-power"
+    device_class: "energy"
+    state_class: "total_increasing"  
   

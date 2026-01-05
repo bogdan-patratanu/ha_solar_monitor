@@ -18,13 +18,59 @@ connection:
 
 # Include common sensor packages
 includes:
+  - deye/common/inverter.yaml
   - deye/common/battery.yaml
   - deye/common/pv1.yaml
   - deye/common/pv2.yaml
   - deye/common/pv.yaml
   - deye/common/grid_1p.yaml
   - deye/common/load_1p.yaml
-  - deye/common/inverter.yaml
 
-# Additional model-specific sensors (if any)
-sensors: {}
+# Add new sensors or override common sensors
+sensors: 
+  inverter_rated_power:
+    address: [16, 17]    
+  inverter_temperature:
+    address: 90
+  inverter_date_time:
+    address: [22, 23, 24]
+  inverter_alarm:
+    address: [101, 102]
+  inverter_fault:
+    address: [103, 104, 105, 106]
+  battery_voltage:
+    address: 183
+  battery_soc:
+    address: 316
+  battery_power:
+    address: 190
+  battery_current:
+    address: 191
+    data_type: int16
+  battery_charge_daily:
+    address: 70
+  battery_discharge_daily:
+    address: 71
+  battery_charge_total:
+    address: [72, 73]
+  battery_discharge_total:
+    address: [74, 75]
+  pv1_voltage:
+    address: 109
+  pv1_current:
+    address: 110
+  pv1_power:
+    address: 186
+  pv2_voltage:
+    address: 111
+  pv2_current:
+    address: 112
+  pv2_power:
+    address: 187
+  pv_power_total:
+    address: [186, 187]
+  pv_production_daily:
+    address: 108
+  pv_production_total:
+    address: [96, 97]
+    
