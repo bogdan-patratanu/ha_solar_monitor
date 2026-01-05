@@ -3,42 +3,34 @@
 # Location: templates/deye/common/load_1p.yaml
 
 sensors:
-  load_power:
-    address: 178
+  ct_internal_power:
+    address: 167
     data_type: int16
-    name: "Load Power"
+    name: "Internal CT power"
     unit: "W"
-    factor: 1  # Signed value
+    factor: 1
     icon: "mdi:home-lightning-bolt"
     device_class: "power"
     state_class: "measurement"
   
-  load_frequency:
-    address: 192
-    data_type: uint16
-    name: "Load Frequency"
-    unit: "Hz"
-    factor: 0.01
-    icon: "mdi:sine-wave"
+  ct_external_power:
+    address: 170
+    data_type: int16
+    name: "External CT power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
+    state_class: "measurement"
+
+  inverter_power:
+    address: 173
+    data_type: int16
+    name: "Inverter power"
+    unit: "W"
+    factor: 1
+    icon: "mdi:home-lightning-bolt"
+    device_class: "power"
     state_class: "measurement"
   
-  daily_load_consumption:
-    address: 84
-    data_type: uint16
-    name: "Daily Load Consumption"
-    unit: "kWh"
-    factor: 0.1
-    icon: "mdi:home-lightning-bolt"
-    device_class: "energy"
-    state_class: "total_increasing"
   
-  total_load_consumption:
-    address: [88, 89]
-    data_type: uint32
-    endianness: little
-    name: "Total Load Consumption"
-    unit: "kWh"
-    factor: 0.1
-    icon: "mdi:home-lightning-bolt"
-    device_class: "energy"
-    state_class: "total_increasing"

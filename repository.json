@@ -1,5 +1,5 @@
 {
-  "name": "Solar Monitor Add-on Repository",
+  "name": "Home Assistant solar monitor",
   "url": "https://github.com/Pugi/ha_solar_monitor",
-  "maintainer": "Pugi"
+  "maintainer": "Bogdan Patratanu"
 }
