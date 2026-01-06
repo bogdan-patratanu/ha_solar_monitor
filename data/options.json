@@ -2,11 +2,11 @@
   "inverters": [
     {
       "name": "Deye",
-      "profile": "Deye_SG03LP1",
+      "profile": "Deye_SG04LP3",
       "driver": "modbusTCP",
       "ha_prefix": "deye_",
       "path": "tcp://host.docker.internal:1502",
-      "modbus_id": 1
+      "modbus_id": 2
     }
   ],
   "mqtt": {
