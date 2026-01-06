@@ -1,5 +1,8 @@
 # Changelog
 
+## [1.0.6]
+- Template correction
+
 ## [1.0.5]
 - Deye 1 phase sensor template
 
