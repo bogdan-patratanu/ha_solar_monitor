@@ -26,5 +26,4 @@ includes:
   - deye/common/pv.yaml
 
 # Add new sensors or override common sensors
-sensors:
-  
+sensors: {}
