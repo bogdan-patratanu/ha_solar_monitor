@@ -1,19 +1,16 @@
-import asyncio
 import json
-import logging
+import asyncio
 import paho.mqtt.client as mqtt
 from equipment import Equipment
 
-logger = logging.getLogger(__name__)
-
-
 class MQTTPublisher:
-    def __init__(self, host, port, username=None, password=None, discovery_prefix='homeassistant'):
+    def __init__(self, host, port, username=None, password=None, discovery_prefix='homeassistant', logger=None):
         self.host = host
         self.port = port
         self.username = username
         self.password = password
         self.discovery_prefix = discovery_prefix
+        self.logger = logger
         self.client = mqtt.Client()
 
         if username and password:
@@ -22,17 +19,17 @@ class MQTTPublisher:
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
 
-        logger.info(f"MQTT Publisher initialized for {host}:{port}")
+        self.logger.info(f"MQTT Publisher initialized for {host}:{port}")
 
     def _on_connect(self, client, userdata, flags, rc):
         if rc == 0:
-            logger.info("Connected to MQTT broker")
+            self.logger.info("Connected to MQTT broker")
         else:
-            logger.error(f"Failed to connect to MQTT broker, return code {rc}")
+            self.logger.error(f"Failed to connect to MQTT broker, return code {rc}")
 
     def _on_disconnect(self, client, userdata, rc):
         if rc != 0:
-            logger.warning(f"Unexpected MQTT disconnection. Will auto-reconnect")
+            self.logger.warning(f"Unexpected MQTT disconnection. Will auto-reconnect")
 
     async def connect(self):
         try:
@@ -41,7 +38,7 @@ class MQTTPublisher:
             await asyncio.sleep(0.5)
             return True
         except Exception as e:
-            logger.error(f"Error connecting to MQTT broker: {e}")
+            self.logger.error(f"Error connecting to MQTT broker: {e}")
             return False
 
     def disconnect(self):
@@ -89,7 +86,7 @@ class MQTTPublisher:
             self.client.publish(config_topic, json.dumps(config), retain=True)
 
         await asyncio.sleep(0.1)
-        logger.info(f"Published discovery configuration for {equipment.name}")
+        self.logger.info(f"Published discovery configuration for {equipment.name}")
 
     async def publish_data(self, equipment_name, data, manufacturer='Unknown'):
         device_id = equipment_name.lower().replace(' ', '_')
@@ -107,4 +104,4 @@ class MQTTPublisher:
         availability_topic = f"{base_topic}/availability"
 
         self.client.publish(availability_topic, "offline", retain=True)
-        logger.warning(f"Published offline status for {equipment_name}")
+        self.logger.warning(f"Published offline status for {equipment_name}")

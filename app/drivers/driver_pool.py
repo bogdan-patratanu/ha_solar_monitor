@@ -1,26 +1,32 @@
-"""Connection pool for sharing driver instances."""
+"""Connection pool for managing shared Modbus connections."""
 import asyncio
-import logging
 from typing import Dict, Tuple, Any
-
-logger = logging.getLogger(__name__)
-
 
 driver_pool: Dict[Tuple[str, int], Any] = {}
 lock = asyncio.Lock()
 
 
-async def get_shared_driver(host: str, port: int, driver_class):
-    """Get or create a shared driver instance."""
+async def get_shared_driver(host: str, port: int, driver_class, logger):
+    """Get or create a shared driver instance.
+    
+    Args:
+        host: Host address or device path
+        port: Port number (0 for serial devices)
+        driver_class: Driver class to instantiate
+        logger: Logger instance to pass to driver
+    
+    Returns:
+        Driver instance
+    """
     key = (host, port)
     
     async with lock:
         if key in driver_pool:
-            logger.debug(f"Reusing existing driver for {host}:{port}")
+            # Reusing existing driver
             return driver_pool[key]
         
-        logger.info(f"Creating new shared driver for {host}:{port}")
-        driver = driver_class()  # Create instance of the driver class
+        # Creating new shared driver with logger
+        driver = driver_class(logger)  # Create instance with logger
         driver_pool[key] = driver
         return driver
 

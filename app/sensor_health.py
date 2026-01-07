@@ -1,10 +1,8 @@
 """Sensor health monitoring and statistics."""
 
-from typing import Dict, Any, Optional
+from collections import defaultdict
+from typing import Dict, Optional, Any
 from datetime import datetime
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 class SensorHealth:

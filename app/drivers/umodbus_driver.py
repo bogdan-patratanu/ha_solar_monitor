@@ -1,19 +1,17 @@
 """Umodbus TCP driver implementation (placeholder)."""
-import logging
 from .pymodbus_driver import PymodbusDriver
 from .base_driver import ModbusDriver
 
-logger = logging.getLogger(__name__)
-
 class UmodbusDriver(ModbusDriver):
-    def __init__(self):
+    def __init__(self, logger):
         self.type = 'umodbus'
         self.client = None
         self.connected = False
+        self.logger = logger
     
     async def connect(self, host: str, port: int, timeout: int) -> bool:
-        logger.warning("Umodbus driver not yet implemented, falling back to pymodbus")
-        fallback = PymodbusDriver()
+        self.logger.warning("Umodbus driver not yet implemented, falling back to pymodbus")
+        fallback = PymodbusDriver(self.logger)
         if await fallback.connect(host, port, timeout):
             self.client = fallback.client
             self.connected = True

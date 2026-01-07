@@ -1,127 +1,32 @@
 import asyncio
 import json
-import logging
 import os
 import sys
-import traceback
-from pathlib import Path
 from pymodbus.exceptions import ModbusException
-from drivers.pymodbus_driver import PymodbusDriver
-from drivers.umodbus_driver import UmodbusDriver
-from drivers.solarman_driver import SolarmanDriver
-from config_loader import load_config
 from equipment import Equipment
-from template_loader import load_inverter_template
 from drivers.driver_pool import close_all_drivers
-
-# Configure logging first
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-
-# Suppress pymodbus internal debug logs
-pymodbus_logger = logging.getLogger('pymodbus')
-pymodbus_logger.setLevel(logging.WARNING)
-
-# Enable our custom debug logging
-app_logger = logging.getLogger('app')
-app_logger.setLevel(logging.DEBUG)
-
-logger = logging.getLogger(__name__)
+from common import initialize_equipments
+from logger_config import create_logger
 
 
 async def main_loop():
     config_path = os.getenv('CONFIG_PATH', '/data/options.json')
 
     try:
-        config = await load_config(config_path)
-        log_level = config.get('log_level', 'info').upper()
-        logging.getLogger().setLevel(getattr(logging, log_level))
-
-        debug_level = config.get('debug', 0)
-        asyncio.get_event_loop().set_debug(debug_level > 0)
-
-        if debug_level > 0:
-            logging.getLogger('pymodbus').setLevel(logging.DEBUG)
-            logger.info("Enabled pymodbus debug logging")
-
-        logger.info("Solar Monitor started")
-        logger.info(f"Monitoring {len(config['inverters'])} inverter(s)")
-        logger.info(f"Debug level: {debug_level}")
-        logger.info(f"Log level: {log_level}")
-
-        connections_pool = {}
-        equipments = []
-        for idx, inv_config in enumerate(config['inverters']):
-
-            inv_profile = inv_config['profile']
-            inv_modbus = inv_config['modbus_id']
-            inv_name = inv_config['name']
-            inv_path = inv_config['path']
-            inv_driver = inv_config['driver']
-
-            # Create driver based on protocol
-            if inv_driver == "modbusTCP":
-                driver_class = PymodbusDriver
-            elif inv_driver == "modbusRTU":
-                driver_class = UmodbusDriver
-            elif inv_driver == "solarman":
-                driver_class = SolarmanDriver
-            else:
-                logger.error(f"Unsupported protocol '{inv_driver}' for {inv_name}")
-                continue
-
-            if inv_path is None or inv_path == "":
-                logger.error(f"No connection string defined for {inv_name}")
-                continue
-
-            try:
-                # Parse connection string (format: protocol://host:port)
-                protocol, rest = inv_path.split("://", 1)
-                host, port_str = rest.rsplit(":", 1)
-                port = int(port_str)
-
-            except (ValueError, AttributeError):
-                logger.error(f"Invalid connection string format for {inv_name}: {inv_path}")
-                continue
-
-            host_port = (host, port)
-            if host_port not in connections_pool:
-                driver_instance = driver_class()
-                connections_pool[host_port] = driver_instance
-
-            template = load_inverter_template(inv_profile)
-            if template is None:
-                logger.error(f"Failed to load template for profile {inv_profile}")
-                continue
-
-            inverter_configuration = template.copy()
-            inverter_configuration['metadata']['name'] = inv_name
-            inverter_configuration['metadata']['ha_prefix'] = inv_config.get('ha_prefix')
-
-            inverter_configuration['connection']['host'] = host
-            inverter_configuration['connection']['port'] = port
-            inverter_configuration['connection']['modbus_id'] = inv_modbus
-            inverter_configuration['connection']['driver'] = inv_driver
-            inverter_configuration['connection']['driver_instance'] = connections_pool[host_port]
-
-            equipment = Equipment(
-                configuration=inverter_configuration
-            )
-
-            await equipment.connect()
-            equipments.append(equipment)
-            logger.info(
-                f"Configured inverter {idx + 1}: {equipment.name} ({equipment.model}) at {host}:{port} with {len(equipment.sensors)} sensors")
+        # Initialize logger first with default level, will be reconfigured from config
+        logger = create_logger()
+        
+        config, equipments = await initialize_equipments(config_path, logger)
+        
+        if config.get('debug', False):
+            asyncio.get_event_loop().set_debug(True)
 
         logger.info("Starting monitoring loop...")
 
         tasks = []
         for idx, inverter in enumerate(equipments):
             task = asyncio.create_task(
-                monitor_equipment(inverter)
+                monitor_equipment(inverter, logger)
             )
             tasks.append(task)
 
@@ -137,7 +42,7 @@ async def main_loop():
         return 1
 
 
-async def monitor_equipment(equipment: Equipment):
+async def monitor_equipment(equipment: Equipment, logger):
     """Monitor with RS485 sharing support."""
     # Create lock per RS485 interface
     lock_key = f"{equipment.host}:{equipment.port}"
@@ -145,7 +50,6 @@ async def monitor_equipment(equipment: Equipment):
         monitor_equipment.locks[lock_key] = asyncio.Lock()
     lock = monitor_equipment.locks[lock_key]
 
-    logger = logging.getLogger(__name__)
     consecutive_errors = 0
     max_consecutive_errors = 5
 

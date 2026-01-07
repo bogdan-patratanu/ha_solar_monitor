@@ -21,7 +21,7 @@ schema:
   inverters:
     - name: str
       profile: list(Deye_SG03LP1|Deye_SG04LP3)
-      driver: list(modbusTCP|modbusRTU|solarman)
+      driver: list(modbusTCP|modbusRTU)
       ha_prefix: str
       path: str
       modbus_id: int(0,16)
@@ -31,24 +31,26 @@ schema:
     username: str
     password: str
     discovery_prefix: str
-  debug: int
-  log_level: str
+  debug: bool?
+  log_level: list(CRITICAL|ERROR|WARNING|INFO|DEBUG|NOTSET)?
 options:
   inverters:
     - name: "Deye"
       profile: "Deye_SG04LP3"
       driver: "modbusTCP"
       ha_prefix: "deye_master_"
-      path: "tcp://192.168.69.3:502"
+      path: "192.168.69.3:502"
       modbus_id: 1
+    # Example for TCP connection: path: "192.168.1.100:502"
+    # Example for RTU/Serial: path: "/dev/ttyUSB0" or "COM3"
   mqtt:
     host: "core-mosquitto"
     port: 1883
     username: "mqtt"
     password: "mqtt"
     discovery_prefix: "homeassistant"
-  debug: 0
-  log_level: "info"
+  debug: false
+  log_level: "INFO"
 map:
   - share:rw
 

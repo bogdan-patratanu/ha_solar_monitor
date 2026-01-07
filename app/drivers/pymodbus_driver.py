@@ -1,17 +1,15 @@
 """Pymodbus TCP driver implementation."""
-import logging
 import asyncio
 from pymodbus.client import AsyncModbusTcpClient
+from pymodbus.exceptions import ModbusException
 from .base_driver import ModbusDriver, decode_modbus_message
 
-# Use our application logger instead of pymodbus logger
-app_logger = logging.getLogger('app')
-
 class PymodbusDriver(ModbusDriver):
-    def __init__(self):
+    def __init__(self, logger):
         self.type = 'pymodbus'
         self.client = None
         self.lock = asyncio.Lock()
+        self.logger = logger
     
     async def connect(self, host: str, port: int, timeout: int) -> bool:
         try:
@@ -23,7 +21,7 @@ class PymodbusDriver(ModbusDriver):
             await self.client.connect()
             return self.client.connected
         except Exception as e:
-            app_logger.error(f"Pymodbus connection error: {e}")
+            self.logger.error(f"Pymodbus connection error: {e}")
             return False
     
     async def disconnect(self):
@@ -43,7 +41,7 @@ class PymodbusDriver(ModbusDriver):
                 # Decode and log request
                 request_bytes = bytes(request)
                 decoded_request = decode_modbus_message(request_bytes)
-                app_logger.debug(f"Modbus request: {decoded_request}")
+                self.logger.debug(f"Modbus request: {decoded_request}")
                 
                 # Send request and get response
                 response = await self.client.execute(request)
@@ -52,11 +50,11 @@ class PymodbusDriver(ModbusDriver):
                     # Decode and log response
                     response_bytes = bytes(response)
                     decoded_response = decode_modbus_message(response_bytes)
-                    app_logger.debug(f"Modbus response: {decoded_response}")
+                    self.logger.debug(f"Modbus response: {decoded_response}")
                 
                 return response
             except Exception as e:
-                app_logger.error(f"Request execution error: {e}")
+                self.logger.error(f"Request execution error: {e}")
                 return None
     
     @property

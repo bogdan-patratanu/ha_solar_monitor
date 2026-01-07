@@ -1,12 +1,9 @@
 """Base class for all Modbus drivers."""
-import logging
 import struct
 from abc import ABC, abstractmethod
 
-logger = logging.getLogger(__name__)
 
-
-def decode_modbus_message(data: bytes) -> str:
+def decode_modbus_message(data: bytes, logger=None) -> str:
     """Decode Modbus TCP message into human-readable format."""
     if len(data) < 8:
         return f"Invalid Modbus message: {data.hex()}"
