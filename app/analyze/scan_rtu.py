@@ -114,7 +114,7 @@ def scan_baudrates(port: str, unit_id: int, baudrates: list[int], timeout: float
         logger.info(f"\n--- Testing baudrate: {baudrate} ---")
         try:
             if scan_registers(port, baudrate, unit_id, 0, 0, timeout):
-                logger.info(f"\n✓✓✓ SUCCESS! Device found at baudrate {baudrate} ✓✓✓\n")
+                logger.info(f"\n✓✓✓ SUCCESS! Device found at baudrate {baudrate} with unit_id {unit_id} ✓✓✓\n")
                 return baudrate
         except KeyboardInterrupt:
             logger.info("\nScan interrupted by user")
@@ -130,7 +130,7 @@ def scan_full(port: str, baudrates: list[int], device_ids: list[int], timeout: f
     logger.info(f"Testing device IDs: {device_ids}")
     
     results = []
-    register_ranges = [(0, 100), (100, 200), (200, 300), (300, 400), (400, 500)]
+    register_ranges = [(0, 100), (100, 200), (200, 300), (300, 400), (400, 500), (5600, 5700)]
     
     for device_id in device_ids:
         for start, stop in register_ranges:
@@ -169,8 +169,8 @@ if __name__ == "__main__":
     parser.add_argument('--stop', type=int, default=500, help='Stop register address (default: 500)')
     args = parser.parse_args()
 
-    common_baudrates = [9600, 19200, 38400, 57600, 115200, 4800, 2400]
-    common_device_ids = [0, 1, 2, 3, 4, 5, 10, 100, 200, 216, 247]
+    common_baudrates = [9600]
+    common_device_ids = [0, 1, 2]
 
     if args.full_scan:
         # Full scan mode: try all combinations

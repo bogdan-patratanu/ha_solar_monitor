@@ -29,11 +29,12 @@ async def load_config(config_path, logger):
             
             # Extract host and port from path
             parsed = urlparse(inv['path'])
-            if not parsed.hostname:
-                raise ValueError(f"Inverter {idx + 1}: could not parse host from path '{inv['path']}'")
-            inv['host'] = parsed.hostname
-            if parsed.port:
+            if parsed.scheme:
+                inv['host'] = parsed.hostname
                 inv['port'] = parsed.port
+            else:
+                inv['host'] = parsed.path
+                inv['port'] = 0
             
             # Load template for this inverter using profile
             template = template_loader.load_template(inv['profile'])

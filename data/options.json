@@ -1,12 +1,14 @@
 {
-  "inverters": [],
+  "inverters": [
+    
+  ],
   "batteries": [
     {
       "name": "JK",
       "profile": "JK_BMS",
-      "driver": "modbusTCP",
+      "driver": "rawTCPRTU",
       "ha_prefix": "jk_",
-      "path": "host.docker.internal:1503",
+      "path": "192.168.123.6:504",
       "modbus_id": 1
     }
   ],

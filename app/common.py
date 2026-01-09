@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple, Optional
-from drivers.pymodbus_driver import PymodbusDriver
+from drivers.py_modbus_tcp_driver import PyModbusTcpDriver
 from drivers.umodbus_driver import UmodbusDriver
+from drivers.raw_tcp_rtu_driver import RawTcpRtuDriver
 from config_loader import load_config
 from equipment import Equipment
 from template_loader import load_equipment_template
@@ -23,6 +24,7 @@ async def _load_equipment_from_config(
         connections_pool: Shared connection pool
         equipments: List to append loaded equipment to
     """
+    print(equipment_configs)
     for idx, eq_config in enumerate(equipment_configs):
         eq_profile = eq_config['profile']
         eq_modbus = eq_config['modbus_id']
@@ -36,16 +38,12 @@ async def _load_equipment_from_config(
 
         # Parse connection path based on driver type
         try:
-            if eq_driver == "modbusTCP":
-                # TCP format: "host:port" (e.g., "192.168.1.100:502")
-                if ":" not in eq_path:
-                    logger.error(f"Invalid TCP path format for {eq_name}: {eq_path}. Expected 'host:port'")
-                    continue
-                host, port_str = eq_path.rsplit(":", 1)
-                port = int(port_str)
+            if eq_driver == "modbusTCP" or eq_driver == "rawTCPRTU":
+                host = eq_config['host']
+                port = eq_config['port']
             elif eq_driver == "modbusRTU":
                 # RTU format: "/dev/ttyUSB0" or "COM3" or similar serial device path
-                host = eq_path  # Use the device path as the "host" identifier
+                host = eq_config['path']  # Use the device path as the "host" identifier
                 port = 0  # Port is not used for serial connections
             else:
                 logger.error(f"Unknown driver type '{eq_driver}' for {eq_name}")
@@ -58,9 +56,11 @@ async def _load_equipment_from_config(
         if host_port not in connections_pool:
             # Create driver instance with logger
             if eq_driver == "modbusTCP":
-                driver_instance = PymodbusDriver(logger)
+                driver_instance = PyModbusTcpDriver(logger)
             elif eq_driver == "modbusRTU":
                 driver_instance = UmodbusDriver(logger)
+            elif eq_driver == "rawTCPRTU":
+                driver_instance = RawTcpRtuDriver(logger)
             else:
                 logger.error(f"Unsupported driver type '{eq_driver}' for {eq_name}")
                 continue

@@ -12,7 +12,7 @@ metadata:
     - "SUN-12K-SG04LP3-EU"
 
 connection:
-  timeout: 10
+  timeout: 1
   batch_size: 10
 
 # Include common sensor packages

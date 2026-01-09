@@ -60,7 +60,7 @@ class ModbusDriver(ABC):
         pass
     
     @abstractmethod
-    async def read_holding_registers(self, address: int, count: int, slave: int):
+    async def readRegisterValue(self, address: int, count: int, unit_id: int):
         """Read holding registers."""
         pass
     

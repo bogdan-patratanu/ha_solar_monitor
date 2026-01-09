@@ -4,7 +4,7 @@ from pymodbus.client import AsyncModbusTcpClient
 from pymodbus.exceptions import ModbusException
 from .base_driver import ModbusDriver, decode_modbus_message
 
-class PymodbusDriver(ModbusDriver):
+class PyModbusTcpDriver(ModbusDriver):
     def __init__(self, logger):
         self.type = 'pymodbus'
         self.client = None
@@ -28,10 +28,11 @@ class PymodbusDriver(ModbusDriver):
         if self.client:
             self.client.close()
     
-    async def read_holding_registers(self, address: int, count: int, slave: int):
+    async def readRegisterValue(self, address: int, count: int, unit_id: int):
         return await self.client.read_holding_registers(
             address=address,
             count=count,
+            device_id=unit_id
         )
     
     async def _execute_request(self, request):

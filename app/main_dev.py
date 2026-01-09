@@ -10,7 +10,7 @@ from logger_config import create_logger
 
 
 async def main_loop():
-    config_path = os.getenv('CONFIG_PATH', '/data/options.json')
+    config_path = os.getenv('CONFIG_PATH', 'data/options.json')
 
     try:
         # Initialize logger first with default level, will be reconfigured from config
@@ -81,10 +81,10 @@ async def monitor_equipment(equipment: Equipment, logger):
                 f"{equipment.name}: {max_consecutive_errors} consecutive errors. "
                 "Check equipment connection and configuration."
             )
-            await asyncio.sleep(60)
+            await asyncio.sleep(30)
             consecutive_errors = 0
 
-        await asyncio.sleep(60)
+        await asyncio.sleep(30)
 
 
 # Initialize locks storage

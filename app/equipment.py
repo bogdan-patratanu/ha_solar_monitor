@@ -9,8 +9,8 @@ from parsers.register_parser import RegisterConfig, ParserFactory
 
 # Driver registry mapping
 DRIVER_REGISTRY = {
-    "modbusTCP": "pymodbus_driver.PymodbusDriver",
-    "modbusRTU": "pymodbus_driver.PymodbusDriver"
+    "modbusTCP": "py_modbus_tcp_driver.PyModbusTcpDriver",
+    "modbusRTU": "py_modbus_tcp_driver.PyModbusTcpDriver"
 }
 
 
@@ -135,14 +135,6 @@ class Equipment:
                 self.logger.error(f"Reconnect failed for {self.name}")
                 return None
 
-        if self.modbus_id > 1:
-            # Longer delay for slave devices
-            await asyncio.sleep(0.7)
-
-        # Add extra delay for slave devices
-        if self.modbus_id > 1:
-            await asyncio.sleep(0.2)
-
         try:
             # Diagnostic: Verify connectivity before read
             if not await self._verify_connectivity():
@@ -193,12 +185,17 @@ class Equipment:
                             f"[{current_address} to {batch_end}] "
                             f"with slave ID {self.modbus_id}"
                         )
-                        async with asyncio.timeout(self.timeout + 1):
-                            result = await self.driver_instance.read_holding_registers(
-                                address=current_address,
-                                count=count,
-                                slave=self.modbus_id
+                        try:
+                            result = await asyncio.wait_for(
+                                self.driver_instance.readRegisterValue(
+                                    address=current_address,
+                                    count=count,
+                                    unit_id=self.modbus_id
+                                ),
+                                timeout=self.timeout + 1
                             )
+                        except asyncio.TimeoutError as e:
+                            raise asyncio.TimeoutError(f"Timeout reading registers from {current_address} to {current_address+count-1}") from e
 
                         if result is None:
                             raise ModbusException(f"No response from device at {current_address}")

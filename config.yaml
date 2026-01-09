@@ -1,5 +1,5 @@
 name: Solar Monitor
-version: "1.0.6"
+version: "1.0.7"
 slug: solar_monitor
 description: Monitor solar equipments and publish data to Home Assistant
 url: https://github.com/Pugi/ha_solar_monitor
@@ -21,7 +21,7 @@ schema:
   inverters:
     - name: str
       profile: list(Deye_SG03LP1|Deye_SG04LP3)
-      driver: list(modbusTCP|modbusRTU)
+      driver: list(modbusTCP|modbusRTU|rawTCPRTU)
       ha_prefix: str
       path: str
       modbus_id: int(0,16)
