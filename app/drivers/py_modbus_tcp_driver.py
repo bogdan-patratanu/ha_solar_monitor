@@ -5,7 +5,7 @@ from pymodbus.exceptions import ModbusException
 from .base_driver import ModbusDriver, decode_modbus_message
 
 class PyModbusTcpDriver(ModbusDriver):
-    def __init__(self, logger):
+    def __init__(self, logger = None):
         self.type = 'pymodbustcp'
         self.client = None
         self.lock = asyncio.Lock()

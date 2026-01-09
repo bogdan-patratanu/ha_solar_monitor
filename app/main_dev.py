@@ -1,34 +1,57 @@
 import asyncio
-import json
 import os
 import sys
 from pymodbus.exceptions import ModbusException
 from equipment import Equipment
+from mqtt_publisher import MQTTPublisher
 from drivers.driver_pool import close_all_drivers
-from common import initialize_equipments
-from logger_config import create_logger
+from common import load_config, create_logger
 
 
 async def main_loop():
-    config_path = os.getenv('CONFIG_PATH', 'data/options.json')
+    config_path = os.getenv('CONFIG_PATH', '/data/options.json')
+    logger = create_logger('INFO')
 
     try:
-        # Initialize logger first with default level, will be reconfigured from config
-        logger = create_logger()
-        
-        config, equipments = await initialize_equipments(config_path, logger)
-        
+        config = await load_config(config_path)
+
+        log_level = config.get('log_level', 'INFO')
+        logger.setLevel(log_level)
+
         if config.get('debug', False):
             asyncio.get_event_loop().set_debug(True)
+        
+        equipments = config['equipments']
+        inverter_count = len(config.get('inverters', []))
+        battery_count = len(config.get('batteries', []))
 
-        logger.info("Starting monitoring loop...")
+        mqtt_config = config['mqtt']
 
+        mqtt_publisher = MQTTPublisher(
+            host=mqtt_config.get('host', 'core-mosquito'),
+            port=mqtt_config.get('port', 1883),
+            username=mqtt_config.get('username', 'mqtt'),
+            password=mqtt_config.get('password', 'mqtt'),
+            discovery_prefix=mqtt_config.get('discovery_prefix', 'homeassistant'),
+            logger=logger
+        )
+
+        await mqtt_publisher.connect()
+        
         tasks = []
-        for idx, inverter in enumerate(equipments):
+        for equipment in equipments:
+            await equipment.set_logger(logger)
+            await equipment.connect()
+            await mqtt_publisher.publish_discovery(equipment)
             task = asyncio.create_task(
-                monitor_equipment(inverter, logger)
+                monitor_equipment(equipment, mqtt_publisher, logger)
             )
             tasks.append(task)
+
+        logger.info("Solar Monitor started")
+        logger.info(f"Monitoring {inverter_count} inverter(s) and {battery_count} battery(ies)")
+        logger.info(f"Log level: {log_level}")
+        logger.info("Starting monitoring loop...")
 
         await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -42,7 +65,7 @@ async def main_loop():
         return 1
 
 
-async def monitor_equipment(equipment: Equipment, logger):
+async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher, logger):
     """Monitor with RS485 sharing support."""
     # Create lock per RS485 interface
     lock_key = f"{equipment.host}:{equipment.port}"

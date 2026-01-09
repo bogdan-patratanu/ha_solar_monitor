@@ -5,12 +5,13 @@ from typing import Dict, Any, Optional
 import traceback
 from pymodbus.exceptions import ModbusException
 from drivers.driver_pool import get_shared_driver
-from app.parsers.register_parser import RegisterConfig, ParserFactory
+from register_parser import RegisterConfig, ParserFactory
 
 # Driver registry mapping
 DRIVER_REGISTRY = {
     "modbusTCP": "py_modbus_tcp_driver.PyModbusTcpDriver",
-    "modbusRTU": "py_modbus_tcp_driver.PyModbusTcpDriver"
+    "modbusRTU": "py_modbus_tcp_driver.PyModbusTcpDriver",
+    "rawTCPRTU": "raw_tcp_rtu_driver.RawTcpRtuDriver"
 }
 
 
@@ -22,10 +23,8 @@ class Equipment:
     model = None
     manufacturer = None
 
-    def __init__(self, configuration: Dict[str, Any] = None, logger=None):
+    def __init__(self, configuration: Dict[str, Any] = None):
         """Initialize equipment client with template."""
-        self.logger = logger
-
         self.configuration = configuration
         self.sensors = configuration['sensors']
 
@@ -60,11 +59,8 @@ class Equipment:
         self.max_reconnect_attempts = 5
         self.reconnect_delay = 1.0
 
-        self.logger.info(
-            f"Initialized client for {self.name} "
-            f"at {self.host}:{self.port} (Modbus ID: {self.modbus_id}, Driver: {self.driver_class.__name__}, "
-            f"Sensors: {len(self.configuration.get('sensors', {}))})"
-        )
+    async def set_logger(self, logger):
+        self.logger = logger
 
     async def connect(self) -> bool:
         """Connect with slave diagnostics and initialization."""
