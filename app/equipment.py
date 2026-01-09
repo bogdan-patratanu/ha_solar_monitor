@@ -1,22 +1,16 @@
 """Generic equipment client that uses templates and supports multiple drivers."""
 
 import asyncio
-import logging
 from typing import Dict, Any, Optional
-import asyncio
 import traceback
 from pymodbus.exceptions import ModbusException
 from drivers.driver_pool import get_shared_driver
 from parsers.register_parser import RegisterConfig, ParserFactory
-import logging
-
-logger = logging.getLogger(__name__)
 
 # Driver registry mapping
 DRIVER_REGISTRY = {
-    "modbusTCP": "pymodbus_driver.PymodbusDriver",
-    "modbusRTU": "pymodbus_driver.PymodbusDriver",
-    "solarman": "solarman_driver.SolarmanDriver"
+    "modbusTCP": "py_modbus_tcp_driver.PyModbusTcpDriver",
+    "modbusRTU": "py_modbus_tcp_driver.PyModbusTcpDriver"
 }
 
 
@@ -28,8 +22,9 @@ class Equipment:
     model = None
     manufacturer = None
 
-    def __init__(self, configuration: Dict[str, Any] = None):
+    def __init__(self, configuration: Dict[str, Any] = None, logger=None):
         """Initialize equipment client with template."""
+        self.logger = logger
 
         self.configuration = configuration
         self.sensors = configuration['sensors']
@@ -65,7 +60,7 @@ class Equipment:
         self.max_reconnect_attempts = 5
         self.reconnect_delay = 1.0
 
-        logger.info(
+        self.logger.info(
             f"Initialized client for {self.name} "
             f"at {self.host}:{self.port} (Modbus ID: {self.modbus_id}, Driver: {self.driver_class.__name__}, "
             f"Sensors: {len(self.configuration.get('sensors', {}))})"
@@ -79,9 +74,9 @@ class Equipment:
                 reader, writer = await asyncio.open_connection(self.host, self.port)
                 writer.close()
                 await writer.wait_closed()
-                logger.info(f"Network connectivity to {self.host}:{self.port} confirmed")
+                self.logger.info(f"Network connectivity to {self.host}:{self.port} confirmed")
             except Exception as e:
-                logger.error(f"Network error connecting to {self.host}:{self.port}: {e}")
+                self.logger.error(f"Network error connecting to {self.host}:{self.port}: {e}")
                 return False
             
             # Get shared driver instance from pool
@@ -89,7 +84,8 @@ class Equipment:
                 self.driver_instance = await get_shared_driver(
                     self.host,
                     self.port,
-                    self.driver_class  # Pass the class, not the string
+                    self.driver_class,  # Pass the class, not the string
+                    self.logger  # Pass logger to driver pool
                 )
             
             # Connect the driver if not already connected
@@ -99,27 +95,27 @@ class Equipment:
                     if not success:
                         return False
                 else:
-                    logger.error(f"Driver {type(self.driver_instance)} has no connect method")
+                    self.logger.error(f"Driver {type(self.driver_instance)} has no connect method")
                     return False
             
             self.connected = True
-            logger.info(f"Connected to {self.name} using {type(self.driver_instance).__name__} driver")
+            self.logger.info(f"Connected to {self.name} using {type(self.driver_instance).__name__} driver")
             return True
         except Exception as e:
             self.connected = False
-            logger.error(f"Connection error for {self.name}: {e}")
+            self.logger.error(f"Connection error for {self.name}: {e}")
             return False
 
     async def reconnect(self) -> bool:
         """Reconnect to the equipment with exponential backoff."""
         if self.reconnect_attempts >= self.max_reconnect_attempts:
-            logger.error(f"Max reconnect attempts reached for {self.name}")
+            self.logger.error(f"Max reconnect attempts reached for {self.name}")
             return False
 
         await asyncio.sleep(self.reconnect_delay * (2 ** self.reconnect_attempts))
         self.reconnect_attempts += 1
 
-        logger.info(f"Reconnecting to {self.name} (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})")
+        self.logger.info(f"Reconnecting to {self.name} (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})")
         return await self.connect()
 
     async def disconnect(self):
@@ -127,30 +123,22 @@ class Equipment:
         if self.driver_instance:
             await self.driver_instance.disconnect()
             self.connected = False
-            logger.info(f"Disconnected from {self.name}")
+            self.logger.info(f"Disconnected from {self.name}")
 
     async def read_data(self) -> Optional[Dict[str, Any]]:
         """Slave-aware data reading with timing."""
-        logger.info(f"Reading data from {self.name} (ID:{self.modbus_id}) at {self.host}:{self.port}")
+        self.logger.info(f"Reading data from {self.name} (ID:{self.modbus_id}) at {self.host}:{self.port}")
 
         if not self.connected or not self.driver_instance:
-            logger.warning(f"Connection not active for {self.name}, attempting reconnect")
+            self.logger.warning(f"Connection not active for {self.name}, attempting reconnect")
             if not await self.connect():
-                logger.error(f"Reconnect failed for {self.name}")
+                self.logger.error(f"Reconnect failed for {self.name}")
                 return None
-
-        if self.modbus_id > 1:
-            # Longer delay for slave devices
-            await asyncio.sleep(0.7)
-
-        # Add extra delay for slave devices
-        if self.modbus_id > 1:
-            await asyncio.sleep(0.2)
 
         try:
             # Diagnostic: Verify connectivity before read
             if not await self._verify_connectivity():
-                logger.error(f"{self.name}: Connectivity lost before read")
+                self.logger.error(f"{self.name}: Connectivity lost before read")
                 return None
 
             data = {}
@@ -168,7 +156,7 @@ class Equipment:
                     all_addresses.add(addr)
             
             if not all_addresses:
-                logger.warning(f"{self.name}: No register addresses defined in template")
+                self.logger.warning(f"{self.name}: No register addresses defined in template")
                 return {}
             
             sorted_addresses = sorted(all_addresses)
@@ -192,17 +180,22 @@ class Equipment:
                 success = False
                 for attempt in range(max_retries):
                     try:
-                        logger.debug(
+                        self.logger.debug(
                             f"{self.name}: Reading {count} registers "
                             f"[{current_address} to {batch_end}] "
                             f"with slave ID {self.modbus_id}"
                         )
-                        async with asyncio.timeout(self.timeout + 1):
-                            result = await self.driver_instance.read_holding_registers(
-                                address=current_address,
-                                count=count,
-                                slave=self.modbus_id
+                        try:
+                            result = await asyncio.wait_for(
+                                self.driver_instance.readRegisterValue(
+                                    address=current_address,
+                                    count=count,
+                                    unit_id=self.modbus_id
+                                ),
+                                timeout=self.timeout + 1
                             )
+                        except asyncio.TimeoutError as e:
+                            raise asyncio.TimeoutError(f"Timeout reading registers from {current_address} to {current_address+count-1}") from e
 
                         if result is None:
                             raise ModbusException(f"No response from device at {current_address}")
@@ -221,7 +214,7 @@ class Equipment:
 
                     except (ModbusException, asyncio.TimeoutError) as e:
                         error_type = "Timeout" if isinstance(e, asyncio.TimeoutError) else "Modbus"
-                        logger.warning(
+                        self.logger.warning(
                             f"{self.name}: {error_type} error reading registers "
                             f"[{current_address} to {batch_end}] "
                             f"(attempt {attempt + 1}/{max_retries}): {e}"
@@ -230,13 +223,13 @@ class Equipment:
                             await asyncio.sleep(retry_delay * (2 ** attempt))
                         else:
                             if "GatewayNoResponse" in str(e):
-                                logger.error(
+                                self.logger.error(
                                     f"{self.name}: GatewayNoResponse reading registers "
                                     f"[{current_address} to {batch_end}] - "
                                     f"Check unit ID {self.modbus_id} and bridge configuration"
                                 )
                             else:
-                                logger.error(
+                                self.logger.error(
                                     f"{self.name}: Failed after {max_retries} attempts "
                                     f"reading registers [{current_address} to {batch_end}]"
                                 )
@@ -252,7 +245,7 @@ class Equipment:
             # Parse sensors based on template
             for sensor_id in self.configuration.get('sensors', {}):
                 if sensor_id not in sensor_definitions:
-                    logger.warning(f"{self.name}: Sensor '{sensor_id}' not found in template, skipping")
+                    self.logger.warning(f"{self.name}: Sensor '{sensor_id}' not found in template, skipping")
                     continue
 
                 sensor_def = sensor_definitions[sensor_id]
@@ -261,7 +254,7 @@ class Equipment:
                     if value is not None:
                         data[sensor_id] = value
                 except Exception as e:
-                    logger.error(f"{self.name}: Error parsing sensor '{sensor_id}': {e}")
+                    self.logger.error(f"{self.name}: Error parsing sensor '{sensor_id}': {e}")
                     continue
 
             
@@ -274,13 +267,13 @@ class Equipment:
             
             # Special handling for slave devices
             if "slave" in self.name.lower():
-                logger.warning(f"{self.name}: Slave device error, retrying with delay")
+                self.logger.warning(f"{self.name}: Slave device error, retrying with delay")
                 await asyncio.sleep(2)  # Extra delay for slaves
                 return await self.read_data()  # Retry after delay
 
         except asyncio.TimeoutError:
             if self.modbus_id > 1:
-                logger.warning(f"Slave timeout for {self.name}, resetting connection")
+                self.logger.warning(f"Slave timeout for {self.name}, resetting connection")
                 await self.disconnect()
                 await self.connect()
                 return await self.read_data()  # Retry after reset
@@ -289,8 +282,8 @@ class Equipment:
 
         except (ModbusException, asyncio.TimeoutError) as e:
             if self.modbus_id > 1:
-                logger.error(f"Slave communication error: {e}")
-                logger.info("Resetting connection for slave")
+                self.logger.error(f"Slave communication error: {e}")
+                self.logger.info("Resetting connection for slave")
                 await self.disconnect()
                 await self.connect()
                 return await self.read_data()  # Retry after reset
@@ -298,8 +291,8 @@ class Equipment:
                 raise
 
         except Exception as e:
-            logger.error(f"{self.name} (ID:{self.modbus_id}) communication failed: {str(e)}")
-            logger.debug(f"Full error trace: {traceback.format_exc()}")
+            self.logger.error(f"{self.name} (ID:{self.modbus_id}) communication failed: {str(e)}")
+            self.logger.debug(f"Full error trace: {traceback.format_exc()}")
             self.connected = False
             return None
 
@@ -311,7 +304,7 @@ class Equipment:
             await writer.wait_closed()
             return True
         except Exception as e:
-            logger.error(f"Network connectivity check failed for {self.name}: {e}")
+            self.logger.error(f"Network connectivity check failed for {self.name}: {e}")
             self.connected = False
             return False
 
@@ -322,5 +315,5 @@ class Equipment:
             parser = ParserFactory.get_parser(config.data_type)
             return parser.parse(registers, config)
         except Exception as e:
-            logger.error(f"Error parsing sensor {sensor_def.get('name', 'unknown')}: {e}")
+            self.logger.error(f"Error parsing sensor {sensor_def.get('name', 'unknown')}: {e}")
             return None

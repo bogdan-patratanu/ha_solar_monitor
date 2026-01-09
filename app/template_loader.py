@@ -1,19 +1,18 @@
 """Template loader for inverter configurations."""
 
-import logging
 import os
+import sys
 from pathlib import Path
 from typing import Dict, Any, Optional
 import yaml
-
-logger = logging.getLogger(__name__)
 
 
 class TemplateLoader:
     """Load and manage inverter templates."""
     
-    def __init__(self, templates_dir: str = None):
+    def __init__(self, templates_dir: str = None, logger=None):
         """Initialize template loader."""
+        self.logger = logger
         if templates_dir is None:
             # Default to templates directory relative to this file
             base_dir = Path(__file__).parent
@@ -26,15 +25,17 @@ class TemplateLoader:
         self.profile_map = {
             "Deye_SG03LP1": "deye/SG03LP1.yaml",
             "Deye_SG04LP3": "deye/SG04LP3.yaml",
-            # Add more mappings as needed
+            "JK_BMS": "jk/bms.yaml"
         }
         
-        logger.info(f"Template loader initialized with directory: {self.templates_dir}")
+        if self.logger:
+            self.logger.info(f"Template loader initialized with directory: {self.templates_dir}")
     
     def list_manufacturers(self) -> list:
         """List available manufacturers."""
         if not self.templates_dir.exists():
-            logger.warning(f"Templates directory not found: {self.templates_dir}")
+            if self.logger:
+                self.logger.warning(f"Templates directory not found: {self.templates_dir}")
             return []
         
         manufacturers = []
@@ -49,7 +50,8 @@ class TemplateLoader:
         manufacturer_dir = self.templates_dir / manufacturer.lower()
         
         if not manufacturer_dir.exists():
-            logger.warning(f"Manufacturer directory not found: {manufacturer_dir}")
+            if self.logger:
+                self.logger.warning(f"Manufacturer directory not found: {manufacturer_dir}")
             return []
         
         models = []
@@ -63,13 +65,15 @@ class TemplateLoader:
     def load_template(self, profile: str) -> Optional[Dict[str, Any]]:
         """Load a template using a profile string."""
         if profile not in self.profile_map:
-            logger.error(f"Profile '{profile}' not found in profile mapping")
+            if self.logger:
+                self.logger.error(f"Profile '{profile}' not found in profile mapping")
             return None
             
         template_path = self.templates_dir / self.profile_map[profile]
         
         if not template_path.exists():
-            logger.error(f"Template not found: {template_path}")
+            if self.logger:
+                self.logger.error(f"Template not found: {template_path}")
             return None
         
         try:
@@ -82,17 +86,20 @@ class TemplateLoader:
             
             # Validate template structure
             if not self._validate_template(template):
-                logger.error(f"Invalid template structure: {template_path}")
+                if self.logger:
+                    self.logger.error(f"Invalid template structure: {template_path}")
                 return None
             
             # Cache the template
             self._template_cache[profile] = template
             
-            logger.info(f"Loaded template for profile '{profile}' from {template_path}")
+            if self.logger:
+                self.logger.info(f"Loaded template for profile '{profile}' from {template_path}")
             return template
         
         except Exception as e:
-            logger.error(f"Error loading template {template_path}: {e}")
+            if self.logger:
+                self.logger.error(f"Error loading template {template_path}: {e}")
             return None
     
     def _process_includes(self, template: Dict[str, Any]) -> Dict[str, Any]:
@@ -105,7 +112,8 @@ class TemplateLoader:
             include_file = self.templates_dir / include_path
             
             if not include_file.exists():
-                logger.warning(f"Include file not found: {include_file}")
+                if self.logger:
+                    self.logger.warning(f"Include file not found: {include_file}")
                 continue
             
             try:
@@ -113,12 +121,14 @@ class TemplateLoader:
                     include_data = yaml.safe_load(f)
                 
                 if not include_data or not isinstance(include_data, dict) or 'sensors' not in include_data:
-                    logger.warning(f"Include file {include_path} is empty or invalid - skipping")
+                    if self.logger:
+                        self.logger.warning(f"Include file {include_path} is empty or invalid - skipping")
                     continue
                 
                 sensors = include_data.get('sensors', {})
                 if sensors is None:
-                    logger.warning(f"Include file {include_path} has null sensors - skipping")
+                    if self.logger:
+                        self.logger.warning(f"Include file {include_path} has null sensors - skipping")
                     continue
                 
                 # Merge sensors from include into base
@@ -127,9 +137,11 @@ class TemplateLoader:
                         base_sensors[sensor_id] = {**base_sensors[sensor_id], **sensor_def}
                     else:
                         base_sensors[sensor_id] = sensor_def
-                logger.debug(f"Merged {len(sensors)} sensors from {include_path}")
+                if self.logger:
+                    self.logger.debug(f"Merged {len(sensors)} sensors from {include_path}")
             except Exception as e:
-                logger.error(f"Error loading include {include_file}: {e}")
+                if self.logger:
+                    self.logger.error(f"Error loading include {include_file}: {e}")
                 continue
         
         # Now merge current template's sensors (selectively override base)
@@ -151,19 +163,22 @@ class TemplateLoader:
         
         for key in required_keys:
             if key not in template:
-                logger.error(f"Missing required key in template: {key}")
+                if self.logger:
+                    self.logger.error(f"Missing required key in template: {key}")
                 return False
         
         # Validate metadata
         metadata = template['metadata']
         if 'manufacturer' not in metadata or 'model' not in metadata:
-            logger.error("Template metadata missing manufacturer or model")
+            if self.logger:
+                self.logger.error("Template metadata missing manufacturer or model")
             return False
         
         # Validate sensors - can be empty if using includes
         sensors = template['sensors']
         if not isinstance(sensors, dict):
-            logger.error("Template sensors must be a dictionary")
+            if self.logger:
+                self.logger.error("Template sensors must be a dictionary")
             return False
         
         return True
@@ -211,7 +226,7 @@ def get_template_loader() -> TemplateLoader:
     return _template_loader
 
 
-def load_inverter_template(profile: str) -> Optional[Dict[str, Any]]:
-    """Convenience function to load an inverter template."""
+def load_equipment_template(profile: str) -> Optional[Dict[str, Any]]:
+    """Convenience function to load an equipment template."""
     loader = get_template_loader()
     return loader.load_template(profile)

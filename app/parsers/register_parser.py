@@ -2,11 +2,8 @@
 
 from enum import Enum
 from dataclasses import dataclass
-from typing import Dict, Optional, List, Union
+from typing import Dict, Any, Union, Optional, List
 from abc import ABC, abstractmethod
-import logging
-
-logger = logging.getLogger(__name__)
 
 # Type alias for parser return values
 ParsedValue = Union[float, str, None]
@@ -87,10 +84,7 @@ class RegisterParser(ABC):
     def _validate_addresses(self, registers: Dict[int, int], addresses: List[int]) -> bool:
         """Check all addresses exist"""
         missing = [addr for addr in addresses if addr not in registers]
-        if missing:
-            logger.warning(f"Missing register addresses: {missing}")
-            return False
-        return True
+        return len(missing) == 0
     
     def _apply_byte_swap(self, value: int) -> int:
         """Swap bytes within a 16-bit register"""
@@ -103,11 +97,9 @@ class UInt16Parser(RegisterParser):
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[float]:
         addr = config.address
         if isinstance(addr, list):
-            logger.error(f"UInt16Parser expects single address, got list: {addr}")
             return None
             
         if addr not in registers:
-            logger.warning(f"Register address {addr} not found")
             return None
         
         value = registers[addr]
@@ -117,7 +109,6 @@ class UInt16Parser(RegisterParser):
         # Check for lookup table
         if config.lookup:
             lookup_value = config.lookup.get(value, config.lookup.get('default', f"Unknown ({value})"))
-            logger.debug(f"UInt16: addr={addr}, raw={value}, lookup={lookup_value}")
             return lookup_value
         
         # Apply offset before scaling
@@ -125,7 +116,6 @@ class UInt16Parser(RegisterParser):
             value -= config.offset
         
         result = value * config.factor
-        logger.debug(f"UInt16: addr={addr}, raw={value}, offset={config.offset}, factor={config.factor}, result={result}")
         return round(result, 2)
 
 
@@ -135,11 +125,9 @@ class Int16Parser(RegisterParser):
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[float]:
         addr = config.address
         if isinstance(addr, list):
-            logger.error(f"Int16Parser expects single address, got list: {addr}")
             return None
             
         if addr not in registers:
-            logger.warning(f"Register address {addr} not found")
             return None
         
         value = registers[addr]
@@ -155,7 +143,6 @@ class Int16Parser(RegisterParser):
             value -= config.offset
         
         result = value * config.factor
-        logger.debug(f"Int16: addr={addr}, raw={value}, offset={config.offset}, factor={config.factor}, result={result}")
         return round(result, 2)
 
 
@@ -164,11 +151,9 @@ class UInt32Parser(RegisterParser):
     
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[float]:
         if not isinstance(config.address, list):
-            logger.error(f"UInt32Parser expects list of addresses, got: {config.address}")
             return None
             
         if len(config.address) != 2:
-            logger.error(f"UInt32Parser expects 2 addresses, got {len(config.address)}")
             return None
         
         if not self._validate_addresses(registers, config.address):
@@ -185,10 +170,6 @@ class UInt32Parser(RegisterParser):
             value = (reg_values[1] << 16) | reg_values[0]
         
         result = value * config.factor
-        logger.debug(
-            f"UInt32: addr={config.address}, regs={reg_values}, "
-            f"endian={config.endianness.value}, raw={value}, result={result}"
-        )
         return round(result, 2)
 
 
@@ -197,11 +178,9 @@ class Int32Parser(RegisterParser):
     
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[float]:
         if not isinstance(config.address, list):
-            logger.error(f"Int32Parser expects list of addresses, got: {config.address}")
             return None
             
         if len(config.address) != 2:
-            logger.error(f"Int32Parser expects 2 addresses, got {len(config.address)}")
             return None
         
         if not self._validate_addresses(registers, config.address):
@@ -222,10 +201,6 @@ class Int32Parser(RegisterParser):
             value -= 4294967296
         
         result = value * config.factor
-        logger.debug(
-            f"Int32: addr={config.address}, regs={reg_values}, "
-            f"endian={config.endianness.value}, raw={value}, result={result}"
-        )
         return round(result, 2)
 
 
@@ -234,7 +209,6 @@ class SumParser(RegisterParser):
     
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[float]:
         if not isinstance(config.address, list):
-            logger.error(f"SumParser expects list of addresses, got: {config.address}")
             return None
         
         if not self._validate_addresses(registers, config.address):
@@ -246,10 +220,6 @@ class SumParser(RegisterParser):
         
         total = sum(reg_values)
         result = total * config.factor
-        logger.debug(
-            f"Sum: addr={config.address}, values={reg_values}, "
-            f"sum={total}, factor={config.factor}, result={result}"
-        )
         return round(result, 2)
 
 
@@ -283,14 +253,12 @@ class RawParser(RegisterParser):
             
             # If we got readable text, return it
             if text and text.isprintable():
-                logger.debug(f"Raw: decoded {config.name} as text: '{text}'")
                 return text
         except:
             pass
         
         # Otherwise return as hex string
         hex_str = ' '.join([f"{val:04X}" for val in reg_values])
-        logger.debug(f"Raw: {config.name} as hex: {hex_str}")
         return hex_str
 
 
@@ -299,7 +267,6 @@ class DateTimeParser(RegisterParser):
     
     def parse(self, registers: Dict[int, int], config: RegisterConfig) -> Optional[str]:
         if not isinstance(config.address, list) or len(config.address) != 3:
-            logger.error(f"DateTimeParser expects 3 addresses, got: {config.address}")
             return None
         
         if not self._validate_addresses(registers, config.address):
@@ -324,15 +291,9 @@ class DateTimeParser(RegisterParser):
             
             # Format as ISO datetime string
             datetime_str = f"{full_year:04d}-{month:02d}-{day:02d} {hour:02d}:{minute:02d}:{second:02d}"
-            
-            logger.debug(
-                f"DateTime: regs={[f'{v:04X}' for v in reg_values]}, "
-                f"decoded={datetime_str}"
-            )
             return datetime_str
             
         except Exception as e:
-            logger.error(f"Error decoding datetime: {e}")
             # Fallback to hex
             hex_str = ' '.join([f"{val:04X}" for val in reg_values])
             return hex_str

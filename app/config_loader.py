@@ -1,25 +1,18 @@
 import asyncio
 import json
-import logging
 import os
+import sys
 from pathlib import Path
-from urllib.parse import urlparse
 from template_loader import get_template_loader
 from urllib.parse import urlparse
 
-logger = logging.getLogger(__name__)
-
-
-async def load_config(config_path):
+async def load_config(config_path, logger):
     try:
         if not os.path.exists(config_path):
             raise FileNotFoundError(f"Configuration file not found: {config_path}")
         
         with open(config_path, 'r') as f:
             config = json.load(f)
-        
-        if 'inverters' not in config or not config['inverters']:
-            raise ValueError("No inverters configured")
         
         if 'mqtt' not in config:
             config['mqtt'] = {}
@@ -36,11 +29,12 @@ async def load_config(config_path):
             
             # Extract host and port from path
             parsed = urlparse(inv['path'])
-            if not parsed.hostname:
-                raise ValueError(f"Inverter {idx + 1}: could not parse host from path '{inv['path']}'")
-            inv['host'] = parsed.hostname
-            if parsed.port:
+            if parsed.scheme:
+                inv['host'] = parsed.hostname
                 inv['port'] = parsed.port
+            else:
+                inv['host'] = parsed.path
+                inv['port'] = 0
             
             # Load template for this inverter using profile
             template = template_loader.load_template(inv['profile'])

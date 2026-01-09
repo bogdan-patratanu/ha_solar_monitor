@@ -12,7 +12,7 @@ metadata:
     - "SUN-6K-SG03LP1-EU"
     - "SUN-8K-SG03LP1-EU"
 connection:
-  timeout: 10
+  timeout: 1
   batch_size: 10
 
 

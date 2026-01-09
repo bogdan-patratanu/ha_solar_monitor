@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.7]
+- JK BMS template
+- code refactoring
+
 ## [1.0.6]
 - Template correction
 
