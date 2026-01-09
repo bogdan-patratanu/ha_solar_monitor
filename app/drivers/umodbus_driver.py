@@ -3,7 +3,7 @@ from .py_modbus_tcp_driver import PyModbusTcpDriver
 from .base_driver import ModbusDriver
 
 class UmodbusDriver(ModbusDriver):
-    def __init__(self, logger):
+    def __init__(self, logger = None):
         self.type = 'umodbus'
         self.client = None
         self.connected = False

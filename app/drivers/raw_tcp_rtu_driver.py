@@ -48,7 +48,7 @@ def parse_modbus_rtu_response(frame: bytes) -> tuple:
 class RawTcpRtuDriver(ModbusDriver):
     """Raw TCP driver that sends Modbus RTU frames over TCP socket."""
     
-    def __init__(self, logger):
+    def __init__(self, logger = None):
         self.type = 'raw_tcp_rtu'
         self.reader = None
         self.writer = None
