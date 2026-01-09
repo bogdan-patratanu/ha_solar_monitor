@@ -2,7 +2,7 @@
 
 ## [1.0.8]
 
-- more refactoring
+- code optimization
 
 ## [1.0.7]
 

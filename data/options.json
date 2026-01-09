@@ -2,7 +2,7 @@
   "inverters": [
     {
       "name": "Deye",
-      "profile": "Deye_SG03LP1",
+      "profile": "Deye_SG04LP3",
       "driver": "modbusTCP",
       "ha_prefix": "deye_",
       "path": "192.168.69.3:502",

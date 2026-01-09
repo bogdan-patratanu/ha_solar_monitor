@@ -1,6 +1,8 @@
 import asyncio
 import os
 import sys
+import json
+import time
 from pymodbus.exceptions import ModbusException
 from equipment import Equipment
 from mqtt_publisher import MQTTPublisher
@@ -77,14 +79,18 @@ async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher,
     max_consecutive_errors = 5
 
     while True:
+        start_time = time.monotonic()
         async with lock:  # Serialize access to shared bus
             try:
                 data = await equipment.read_data()
                 if data:
-                    # Print data to screen instead of publishing to MQTT
-                    print(f"Data for {equipment.name}:")
-                    print(json.dumps(data, indent=2))
-                    logger.debug(f"Printed data for {equipment.name}")
+                    try:
+                        # Print data to screen instead of publishing to MQTT
+                        print(f"Data for {equipment.name}:")
+                        print(json.dumps(data, indent=2))
+                        logger.debug(f"Printed data for {equipment.name}")
+                    except Exception as e:
+                        logger.error(f"Error printing data for {equipment.name}: {e}")
                     consecutive_errors = 0
                 else:
                     consecutive_errors += 1
@@ -98,16 +104,23 @@ async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher,
             except ModbusException as e:
                 logger.error(f"Error reading from {equipment.name}: {e}")
                 consecutive_errors += 1
-
-        if consecutive_errors >= 5:
+            except Exception as e:
+                logger.error(f"Unexpected error reading from {equipment.name}: {e}")
+                consecutive_errors += 1
+        
+        end_time = time.monotonic()
+        duration = end_time - start_time
+        logger.info(f"{equipment.name} task took {duration:.2f} seconds")
+        
+        if consecutive_errors >= max_consecutive_errors:
             logger.critical(
                 f"{equipment.name}: {max_consecutive_errors} consecutive errors. "
                 "Check equipment connection and configuration."
             )
-            await asyncio.sleep(30)
+            await asyncio.sleep(5)
             consecutive_errors = 0
 
-        await asyncio.sleep(30)
+        await asyncio.sleep(5)
 
 
 # Initialize locks storage

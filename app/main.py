@@ -102,10 +102,10 @@ async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher,
                 f"{equipment.name}: {max_consecutive_errors} consecutive errors. "
                 "Check equipment connection and configuration."
             )
-            await asyncio.sleep(30)
+            await asyncio.sleep(5)
             consecutive_errors = 0
 
-        await asyncio.sleep(30)
+        await asyncio.sleep(5)
 
 
 # Initialize locks storage
