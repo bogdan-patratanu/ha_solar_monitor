@@ -1,5 +1,5 @@
 name: Solar Monitor
-version: "1.0.7"
+version: "1.0.8"
 slug: solar_monitor
 description: Monitor solar equipments and publish data to Home Assistant
 url: https://github.com/Pugi/ha_solar_monitor
@@ -41,8 +41,6 @@ options:
       ha_prefix: "deye_master_"
       path: "192.168.69.3:502"
       modbus_id: 1
-    # Example for TCP connection: path: "192.168.1.100:502"
-    # Example for RTU/Serial: path: "/dev/ttyUSB0" or "COM3"
   mqtt:
     host: "core-mosquitto"
     port: 1883

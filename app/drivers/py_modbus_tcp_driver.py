@@ -6,7 +6,7 @@ from .base_driver import ModbusDriver, decode_modbus_message
 
 class PyModbusTcpDriver(ModbusDriver):
     def __init__(self, logger):
-        self.type = 'pymodbus'
+        self.type = 'pymodbustcp'
         self.client = None
         self.lock = asyncio.Lock()
         self.logger = logger

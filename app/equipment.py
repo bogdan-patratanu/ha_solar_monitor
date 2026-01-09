@@ -5,7 +5,7 @@ from typing import Dict, Any, Optional
 import traceback
 from pymodbus.exceptions import ModbusException
 from drivers.driver_pool import get_shared_driver
-from parsers.register_parser import RegisterConfig, ParserFactory
+from app.parsers.register_parser import RegisterConfig, ParserFactory
 
 # Driver registry mapping
 DRIVER_REGISTRY = {
