@@ -1,5 +1,5 @@
 name: Solar Monitor
-version: "1.0.9"
+version: "1.0.10"
 slug: solar_monitor
 description: Monitor solar equipments and publish data to Home Assistant
 url: https://github.com/Pugi/ha_solar_monitor
@@ -17,6 +17,15 @@ init: false
 startup: application
 boot: auto
 host_network: true
+devices:
+  - /dev/ttyUSB0
+  - /dev/ttyUSB1
+  - /dev/ttyUSB2
+  - /dev/ttyACM0
+  - /dev/serial/by-id
+privileged:
+  - SYS_RAWIO
+udev: true
 schema:
   inverters:
     - name: str

@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.10]
+
+- Add-on USB access
+
 ## [1.0.9]
 
 - Support for JK BMS in broadcast mode
