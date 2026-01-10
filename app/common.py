@@ -1,7 +1,8 @@
 from typing import List, Dict, Tuple, Optional
 from drivers.py_modbus_tcp_driver import PyModbusTcpDriver
-from drivers.umodbus_driver import UmodbusDriver
+from drivers.py_modbus_rtu_driver import PyModbusRtuDriver
 from drivers.raw_tcp_rtu_driver import RawTcpRtuDriver
+from drivers.jk_bms_driver import JkBmsDriver
 from equipment import Equipment
 from template_loader import TemplateLoader
 import os
@@ -59,7 +60,6 @@ async def _load_equipment_from_config(
     
     Args:
         equipment_configs: List of equipment configurations
-        equipment_type: Type of equipment ('inverter' or 'battery')
         connections_pool: Shared connection pool
         equipments: List to append loaded equipment to
     """
@@ -76,7 +76,9 @@ async def _load_equipment_from_config(
         if not path:
             raise ValueError(f"Equipment {idx + 1}: path is required")
 
-        if ':' in path:
+        eq_driver = eq_config.get('driver', 'modbusRTU')
+
+        if eq_driver == "modbusTCP" or eq_driver == "rawTCPRTU":
             host, port = path.split(':', 1)  
             eq_config['host'] = host
             eq_config['port'] = port
@@ -84,16 +86,17 @@ async def _load_equipment_from_config(
             eq_config['host'] = re.sub(r"[^A-Za-z0-9]", "", path)
             eq_config['port'] = 0
         
-        eq_driver = eq_config.get('driver', 'modbusRTU')
         host_port = (eq_config['host'], eq_config['port'])
         if host_port not in connections_pool:            
             eq_name = eq_config['name']
             if eq_driver == "modbusTCP":
                 driver_instance = PyModbusTcpDriver()
             elif eq_driver == "modbusRTU":
-                driver_instance = UmodbusDriver()
+                driver_instance = PyModbusRtuDriver()
             elif eq_driver == "rawTCPRTU":
                 driver_instance = RawTcpRtuDriver()
+            elif eq_driver == "jkBMS":
+                driver_instance = JkBmsDriver()
             else:
                 raise ValueError(f"Unsupported driver type '{eq_driver}' for {eq_name}")
             connections_pool[host_port] = driver_instance

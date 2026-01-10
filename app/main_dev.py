@@ -5,13 +5,12 @@ import json
 import time
 from pymodbus.exceptions import ModbusException
 from equipment import Equipment
-from mqtt_publisher import MQTTPublisher
 from drivers.driver_pool import close_all_drivers
 from common import load_config, create_logger
 
 
 async def main_loop():
-    config_path = os.getenv('CONFIG_PATH', '/data/options.json')
+    config_path = os.getenv('CONFIG_PATH', '../data/options.json')
     logger = create_logger('INFO')
 
     try:
@@ -27,26 +26,12 @@ async def main_loop():
         inverter_count = len(config.get('inverters', []))
         battery_count = len(config.get('batteries', []))
 
-        mqtt_config = config['mqtt']
-
-        mqtt_publisher = MQTTPublisher(
-            host=mqtt_config.get('host', 'core-mosquito'),
-            port=mqtt_config.get('port', 1883),
-            username=mqtt_config.get('username', 'mqtt'),
-            password=mqtt_config.get('password', 'mqtt'),
-            discovery_prefix=mqtt_config.get('discovery_prefix', 'homeassistant'),
-            logger=logger
-        )
-
-        await mqtt_publisher.connect()
-        
         tasks = []
         for equipment in equipments:
             await equipment.set_logger(logger)
             await equipment.connect()
-            await mqtt_publisher.publish_discovery(equipment)
             task = asyncio.create_task(
-                monitor_equipment(equipment, mqtt_publisher, logger)
+                monitor_equipment(equipment, logger)
             )
             tasks.append(task)
 
@@ -67,7 +52,7 @@ async def main_loop():
         return 1
 
 
-async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher, logger):
+async def monitor_equipment(equipment: Equipment, logger):
     """Monitor with RS485 sharing support."""
     # Create lock per RS485 interface
     lock_key = f"{equipment.host}:{equipment.port}"
@@ -85,7 +70,6 @@ async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher,
                 data = await equipment.read_data()
                 if data:
                     try:
-                        # Print data to screen instead of publishing to MQTT
                         print(f"Data for {equipment.name}:")
                         print(json.dumps(data, indent=2))
                         logger.debug(f"Printed data for {equipment.name}")
@@ -117,10 +101,10 @@ async def monitor_equipment(equipment: Equipment, mqtt_publisher: MQTTPublisher,
                 f"{equipment.name}: {max_consecutive_errors} consecutive errors. "
                 "Check equipment connection and configuration."
             )
-            await asyncio.sleep(5)
+            await asyncio.sleep(15)
             consecutive_errors = 0
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
 
 
 # Initialize locks storage
