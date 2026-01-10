@@ -6,10 +6,11 @@ driver_pool: Dict[Tuple[str, int], Any] = {}
 lock = asyncio.Lock()
 
 
-async def get_shared_driver(host: str, port: int, driver_class, logger):
+async def get_shared_driver(path: str, host: str, port: int, driver_class, logger):
     """Get or create a shared driver instance.
     
     Args:
+        path: Device path
         host: Host address or device path
         port: Port number (0 for serial devices)
         driver_class: Driver class to instantiate

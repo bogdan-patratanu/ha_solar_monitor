@@ -57,7 +57,7 @@ class RawTcpRtuDriver(ModbusDriver):
         self._host = None
         self._port = None
     
-    async def connect(self, host: str, port: int, timeout: int) -> bool:
+    async def connect(self, path: str, host: str, port: int, timeout: int) -> bool:
         """Connect to TCP gateway."""
         try:
             self._host = host

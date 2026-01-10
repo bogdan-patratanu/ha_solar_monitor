@@ -1,682 +1,418 @@
-# JK BMS - Battery Management System
-# Models: PB2A16S20P, PB2A16S15P, PB1A16S15P, PB1A16S10P
-# Communication: RS485 Modbus RTU via mbusd gateway
+# JK BMS Complete Template
+# Based on reference documentation from .referenceCode3
+# Trame 3 - Live Data (Register 5664/0x1620)
 
 metadata:
   manufacturer: "JKong"
   model: "JK-BMS"
-  description: "JK Battery Management System (RS485 Modbus)"
+  description: "JK Battery Management System (Complete Template)"
   voltage: "LV"
   supported_models:
-    - "PB2A16S20P"
-    - "PB2A16S15P"
-    - "PB1A16S15P"
-    - "PB1A16S10P"
+    - "JK-B2A24S"
+    - "JK-B1A24S"
+    - "JK-B2A20S"
 
 connection:
-  timeout: 10
-  batch_size: 10
-
-# JK BMS uses 3 main register blocks:
-# - Trame 1 (0x161C): Static/Fixed data (BMS info, serial, firmware)
-# - Trame 2 (0x161E): Setup/Configuration data (protection settings)
-# - Trame 3 (0x1620): Live/Dynamic data (voltages, current, SOC, temps)
+  timeout: 5
+  batch_size: 150
 
 sensors:
-  # ===== Cell Voltages (Trame 3 - Live Data) =====
-  # Register base: 0x1620, offset starts at byte 6
+  # ===== Cell Voltages (Offset 6-36, uint16le) =====
   cell_1_voltage:
     name: "Cell 1 Voltage"
-    address: 5632  # 0x1600 base + offset calculation
+    address: 5667  # Base 5664 + offset 3 (6/2)
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_2_voltage:
     name: "Cell 2 Voltage"
-    address: 5633
+    address: 5668
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_3_voltage:
     name: "Cell 3 Voltage"
-    address: 5634
+    address: 5669
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_4_voltage:
     name: "Cell 4 Voltage"
-    address: 5635
+    address: 5670
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_5_voltage:
     name: "Cell 5 Voltage"
-    address: 5636
+    address: 5671
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_6_voltage:
     name: "Cell 6 Voltage"
-    address: 5637
+    address: 5672
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_7_voltage:
     name: "Cell 7 Voltage"
-    address: 5638
+    address: 5673
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_8_voltage:
     name: "Cell 8 Voltage"
-    address: 5639
+    address: 5674
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_9_voltage:
     name: "Cell 9 Voltage"
-    address: 5640
+    address: 5675
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_10_voltage:
     name: "Cell 10 Voltage"
-    address: 5641
+    address: 5676
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_11_voltage:
     name: "Cell 11 Voltage"
-    address: 5642
+    address: 5677
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_12_voltage:
     name: "Cell 12 Voltage"
-    address: 5643
+    address: 5678
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_13_voltage:
     name: "Cell 13 Voltage"
-    address: 5644
+    address: 5679
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_14_voltage:
     name: "Cell 14 Voltage"
-    address: 5645
+    address: 5680
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_15_voltage:
     name: "Cell 15 Voltage"
-    address: 5646
+    address: 5681
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
-    
+  
   cell_16_voltage:
     name: "Cell 16 Voltage"
-    address: 5647
+    address: 5682
     data_type: uint16
-    scale: 0.001
+    factor: 0.001
     unit: "V"
     device_class: "voltage"
 
-  # ===== Cell Resistance (Trame 3) =====
+  # ===== Cell Resistances (Offset 80-110, int16le) =====
   cell_1_resistance:
     name: "Cell 1 Resistance"
-    address: 5669
+    address: 5704  # Base 5664 + offset 40 (80/2)
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_2_resistance:
     name: "Cell 2 Resistance"
-    address: 5670
+    address: 5705
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_3_resistance:
     name: "Cell 3 Resistance"
-    address: 5671
+    address: 5706
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_4_resistance:
     name: "Cell 4 Resistance"
-    address: 5672
+    address: 5707
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_5_resistance:
     name: "Cell 5 Resistance"
-    address: 5673
+    address: 5708
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_6_resistance:
     name: "Cell 6 Resistance"
-    address: 5674
+    address: 5709
     data_type: int16
-    scale: 0.001
+    factor: 0.001
     unit: "Ω"
-    
+  
   cell_7_resistance:
     name: "Cell 7 Resistance"
-    address: 5675
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_8_resistance:
-    name: "Cell 8 Resistance"
-    address: 5676
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_9_resistance:
-    name: "Cell 9 Resistance"
-    address: 5677
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_10_resistance:
-    name: "Cell 10 Resistance"
-    address: 5678
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_11_resistance:
-    name: "Cell 11 Resistance"
-    address: 5679
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_12_resistance:
-    name: "Cell 12 Resistance"
-    address: 5680
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_13_resistance:
-    name: "Cell 13 Resistance"
-    address: 5681
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_14_resistance:
-    name: "Cell 14 Resistance"
-    address: 5682
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_15_resistance:
-    name: "Cell 15 Resistance"
-    address: 5683
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-    
-  cell_16_resistance:
-    name: "Cell 16 Resistance"
-    address: 5684
-    data_type: int16
-    scale: 0.001
-    unit: "Ω"
-
-  # ===== Battery Main Parameters (Trame 3) =====
-  mos_temperature:
-    name: "MOS Temperature"
-    address: 5701
-    data_type: int16
-    scale: 0.1
-    unit: "°C"
-    device_class: "temperature"
-    
-  battery_power:
-    name: "Battery Power"
-    address: 5706
-    data_type: uint32
-    scale: 0.001
-    unit: "W"
-    device_class: "power"
-    endianness: little
-    
-  battery_current:
-    name: "Battery Current"
-    address: 5708
-    data_type: int32
-    scale: 0.001
-    unit: "A"
-    device_class: "current"
-    endianness: little
-    
-  battery_voltage:
-    name: "Battery Voltage"
-    address: 5746
-    data_type: uint16
-    scale: 0.01
-    unit: "V"
-    device_class: "voltage"
-    
-  battery_soc:
-    name: "Battery State of Charge"
-    address: 5715
-    data_type: uint8
-    unit: "%"
-    device_class: "battery"
-    
-  battery_soh:
-    name: "Battery State of Health"
-    address: 5724
-    data_type: uint8
-    unit: "%"
-    
-  battery_capacity_remaining:
-    name: "Battery Capacity Remaining"
-    address: 5716
-    data_type: int32
-    scale: 0.001
-    unit: "Ah"
-    endianness: little
-    
-  battery_capacity_total:
-    name: "Battery Capacity Total"
-    address: 5718
-    data_type: int32
-    scale: 0.001
-    unit: "Ah"
-    endianness: little
-    
-  battery_cycles:
-    name: "Battery Cycle Count"
-    address: 5720
-    data_type: int32
-    unit: ""
-    endianness: little
-    
-  battery_cycle_capacity:
-    name: "Battery Cycle Capacity"
-    address: 5722
-    data_type: int32
-    scale: 0.001
-    unit: "Ah"
-    endianness: little
-
-  # ===== Temperature Sensors (Trame 3) =====
-  temperature_sensor_1:
-    name: "Temperature Sensor 1"
     address: 5710
     data_type: int16
-    scale: 0.1
-    unit: "°C"
-    device_class: "temperature"
-    
-  temperature_sensor_2:
-    name: "Temperature Sensor 2"
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_8_resistance:
+    name: "Cell 8 Resistance"
     address: 5711
     data_type: int16
-    scale: 0.1
-    unit: "°C"
-    device_class: "temperature"
-    
-  temperature_sensor_3:
-    name: "Temperature Sensor 3"
-    address: 5758
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_9_resistance:
+    name: "Cell 9 Resistance"
+    address: 5712
     data_type: int16
-    scale: 0.1
-    unit: "°C"
-    device_class: "temperature"
-    
-  temperature_sensor_4:
-    name: "Temperature Sensor 4"
-    address: 5757
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_10_resistance:
+    name: "Cell 10 Resistance"
+    address: 5713
     data_type: int16
-    scale: 0.1
-    unit: "°C"
-    device_class: "temperature"
-
-  # ===== Balancing (Trame 3) =====
-  balance_current:
-    name: "Balance Current"
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_11_resistance:
+    name: "Cell 11 Resistance"
     address: 5714
     data_type: int16
-    scale: 0.001
-    unit: "A"
-    device_class: "current"
-    
-  balance_action:
-    name: "Balance Action"
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_12_resistance:
+    name: "Cell 12 Resistance"
     address: 5715
-    data_type: uint8
-    scale: 0.01
-    unit: ""
-
-  # ===== Switches/Status (Trame 3) =====
-  charge_switch:
-    name: "Charge Switch"
-    address: 5728
-    data_type: uint8
-    unit: ""
-    
-  discharge_switch:
-    name: "Discharge Switch"
-    address: 5729
-    data_type: uint8
-    unit: ""
-    
-  balance_switch:
-    name: "Balance Switch"
-    address: 5730
-    data_type: uint8
-    unit: ""
-    
-  heating_status:
-    name: "Heating Status"
-    address: 5737
-    data_type: uint8
-    unit: ""
-    
-  heating_current:
-    name: "Heating Current"
-    address: 5747
     data_type: int16
-    scale: 0.001
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_13_resistance:
+    name: "Cell 13 Resistance"
+    address: 5716
+    data_type: int16
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_14_resistance:
+    name: "Cell 14 Resistance"
+    address: 5717
+    data_type: int16
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_15_resistance:
+    name: "Cell 15 Resistance"
+    address: 5718
+    data_type: int16
+    factor: 0.001
+    unit: "Ω"
+  
+  cell_16_resistance:
+    name: "Cell 16 Resistance"
+    address: 5719
+    data_type: int16
+    factor: 0.001
+    unit: "Ω"
+
+  # ===== Temperatures =====
+  mosfet_temperature:
+    name: "MOSFET Temperature"
+    address: 5736  # Offset 144 (base 5664 + 72 regs = 5736)
+    data_type: int16
+    factor: 0.1
+    unit: "°C"
+    device_class: "temperature"
+  
+  temperature_sensor_1:
+    name: "Temperature Sensor 1"
+    address: 5745  # Offset 162 (base 5664 + 81 regs = 5745)
+    data_type: int16
+    factor: 0.1
+    unit: "°C"
+    device_class: "temperature"
+  
+  temperature_sensor_2:
+    name: "Temperature Sensor 2"
+    address: 5746  # Offset 164 (base 5664 + 82 regs = 5746)
+    data_type: int16
+    factor: 0.1
+    unit: "°C"
+    device_class: "temperature"
+  
+  temperature_sensor_3:
+    name: "Temperature Sensor 3"
+    address: 5791  # Offset 254 (base 5664 + 127 regs = 5791)
+    data_type: int16
+    factor: 0.1
+    unit: "°C"
+    device_class: "temperature"
+  
+  temperature_sensor_4:
+    name: "Temperature Sensor 4"
+    address: 5793  # Offset 258 (base 5664 + 129 regs = 5793)
+    data_type: int16
+    factor: 0.1
+    unit: "°C"
+    device_class: "temperature"
+
+  # ===== Power and Current =====
+  total_power:
+    name: "Total Power"
+    address: 5741  # Offset 154 (154/2 = 77), uint32le
+    data_type: uint32
+    factor: 0.001
+    unit: "W"
+    device_class: "power"
+  
+  total_current:
+    name: "Total Current"
+    address: 5743  # Offset 158 (158/2 = 79), int32le
+    data_type: int32
+    factor: 0.001
     unit: "A"
     device_class: "current"
-    
-  charge_status:
-    name: "Charge Status"
-    address: 5769
-    data_type: uint8
-    unit: ""
-    
-  charge_status_time:
-    name: "Charge Status Time"
-    address: 5768
-    data_type: uint16
-    unit: "s"
+  
+  balance_current:
+    name: "Balance Current"
+    address: 5749  # Offset 170 (170/2 = 85)
+    data_type: int16
+    factor: 0.001
+    unit: "A"
+    device_class: "current"
 
-  # ===== Runtime Stats (Trame 3) =====
+  # ===== Voltage =====
+  total_voltage:
+    name: "Total Voltage"
+    address: 5781  # Offset 234 (base 5664 + 117 regs = 5781)
+    data_type: uint16
+    factor: 0.01
+    unit: "V"
+    device_class: "voltage"
+
+  # ===== State of Charge and Health =====
+  state_of_charge:
+    name: "State of Charge"
+    address: 5750  # Offset 173 (base 5664 + 86 regs = 5750, but SOC is uint8 at odd offset)
+    data_type: uint16
+    factor: 0.00390625  # Divide by 256 to get the single byte value
+    unit: "%"
+    device_class: "battery"
+  
+  state_of_health:
+    name: "State of Health"
+    address: 5759  # Offset 190 (190/2 = 95)
+    data_type: uint16
+    factor: 1.0
+    unit: "%"
+
+  # ===== Capacity =====
+  remaining_capacity:
+    name: "Remaining Capacity"
+    address: 5751  # Offset 174 (174/2 = 87), int32le
+    data_type: int32
+    factor: 0.001
+    unit: "Ah"
+  
+  battery_capacity:
+    name: "Battery Capacity"
+    address: 5753  # Offset 178 (178/2 = 89), int32le
+    data_type: int32
+    factor: 0.001
+    unit: "Ah"
+  
+  cycle_capacity:
+    name: "Cycle Capacity"
+    address: 5757  # Offset 186 (186/2 = 93), int32le
+    data_type: int32
+    factor: 0.001
+    unit: "Ah"
+
+  # ===== Cycle Count =====
+  cycle_count:
+    name: "Cycle Count"
+    address: 5755  # Offset 182 (182/2 = 91), int32le
+    data_type: int32
+    factor: 1.0
+    unit: ""
+
+  # ===== Runtime =====
   total_runtime:
     name: "Total Runtime"
-    address: 5726
+    address: 5761  # Offset 194 (194/2 = 97), uint32le
     data_type: uint32
+    factor: 1.0
     unit: "s"
-    endianness: little
-    
-  cell_type:
-    name: "Cell Type"
-    address: 5770
-    data_type: uint8
-    unit: ""
 
-  # ===== Configuration/Protection Settings (Trame 2 - Setup Data) =====
-  # Register base: 0x161E
-  cell_overvoltage_protection:
-    name: "Cell Overvoltage Protection"
-    address: 5644
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_overvoltage_recovery:
-    name: "Cell Overvoltage Recovery"
-    address: 5646
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_undervoltage_protection:
-    name: "Cell Undervoltage Protection"
-    address: 5640
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_undervoltage_recovery:
-    name: "Cell Undervoltage Recovery"
-    address: 5642
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  balance_trigger_voltage:
-    name: "Balance Trigger Voltage"
-    address: 5648
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_soc100_voltage:
-    name: "Cell SOC 100% Voltage"
-    address: 5650
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_soc0_voltage:
-    name: "Cell SOC 0% Voltage"
-    address: 5652
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_request_charge_voltage:
-    name: "Cell Request Charge Voltage"
-    address: 5654
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  cell_request_float_voltage:
-    name: "Cell Request Float Voltage"
-    address: 5656
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  power_off_voltage:
-    name: "Power Off Voltage"
-    address: 5658
-    data_type: int32
-    scale: 0.001
-    unit: "V"
-    device_class: "voltage"
-    endianness: little
-    
-  max_charge_current:
-    name: "Max Charge Current"
-    address: 5660
-    data_type: int32
-    scale: 0.001
-    unit: "A"
-    device_class: "current"
-    endianness: little
-    
-  max_discharge_current:
-    name: "Max Discharge Current"
-    address: 5666
-    data_type: int32
-    scale: 0.001
-    unit: "A"
-    device_class: "current"
-    endianness: little
-    
-  max_balance_current:
-    name: "Max Balance Current"
-    address: 5674
-    data_type: int32
-    scale: 0.001
-    unit: "A"
-    device_class: "current"
-    endianness: little
-    
-  charge_overtemperature_protection:
-    name: "Charge Overtemperature Protection"
-    address: 5676
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  charge_overtemperature_recovery:
-    name: "Charge Overtemperature Recovery"
-    address: 5678
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  discharge_overtemperature_protection:
-    name: "Discharge Overtemperature Protection"
-    address: 5680
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  discharge_overtemperature_recovery:
-    name: "Discharge Overtemperature Recovery"
-    address: 5682
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  charge_undertemperature_protection:
-    name: "Charge Undertemperature Protection"
-    address: 5684
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  charge_undertemperature_recovery:
-    name: "Charge Undertemperature Recovery"
-    address: 5686
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  mos_overtemperature_protection:
-    name: "MOS Overtemperature Protection"
-    address: 5688
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-    
-  mos_overtemperature_recovery:
-    name: "MOS Overtemperature Recovery"
-    address: 5690
-    data_type: int32
-    scale: 0.001
-    unit: "°C"
-    device_class: "temperature"
-    endianness: little
-
-  # ===== Static Information (Trame 1) =====
-  # Register base: 0x161C
-  bms_model:
-    name: "BMS Model"
-    address: 5635
-    data_type: string
-    length: 13
+  # ===== Switches/Status =====
+  charge_switch:
+    name: "Charge Switch"
+    address: 5763  # Offset 198 (198/2 = 99)
+    data_type: uint16
+    factor: 1.0
     unit: ""
-    
-  firmware_version:
-    name: "Firmware Version"
-    address: 5643
-    data_type: string
-    length: 3
+  
+  discharge_switch:
+    name: "Discharge Switch"
+    address: 5763  # Offset 199 (199/2 = 99.5, same register)
+    data_type: uint16
+    factor: 1.0
     unit: ""
-    
-  serial_number:
-    name: "Serial Number"
-    address: 5655
-    data_type: string
-    length: 13
+  
+  balance_switch:
+    name: "Balance Switch"
+    address: 5764  # Offset 200 (200/2 = 100)
+    data_type: uint16
+    factor: 1.0
     unit: ""
-    
-  uptime:
-    name: "Uptime"
-    address: 5651
-    data_type: uint32
-    unit: "s"
-    endianness: little
-    
-  power_on_count:
-    name: "Power On Count"
-    address: 5653
-    data_type: uint32
+  
+  balance_action:
+    name: "Balance Action"
+    address: 5750  # Offset 172 (172/2 = 86)
+    data_type: uint16
+    factor: 1.0
     unit: ""
-    endianness: little

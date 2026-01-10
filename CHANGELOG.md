@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.9]
+
+- Support for JK BMS in broadcast mode
+
 ## [1.0.8]
 
 - code optimization

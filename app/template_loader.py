@@ -25,7 +25,7 @@ class TemplateLoader:
         self.profile_map = {
             "Deye_SG03LP1": "deye/SG03LP1.yaml",
             "Deye_SG04LP3": "deye/SG04LP3.yaml",
-            "JK_BMS": "jk/bms.yaml"
+            "JK_BMS_BROADCAST": "jk/bms.yaml"
         }
         
         if self.logger:
@@ -67,13 +67,23 @@ class TemplateLoader:
         if profile not in self.profile_map:
             if self.logger:
                 self.logger.error(f"Profile '{profile}' not found in profile mapping")
+                self.logger.error(f"Available profiles: {list(self.profile_map.keys())}")
             return None
             
         template_path = self.templates_dir / self.profile_map[profile]
         
+        if self.logger:
+            self.logger.info(f"Looking for template at: {template_path}")
+            self.logger.info(f"Template exists: {template_path.exists()}")
+        
         if not template_path.exists():
             if self.logger:
                 self.logger.error(f"Template not found: {template_path}")
+                # List what files ARE in the directory
+                jk_dir = self.templates_dir / "jk"
+                if jk_dir.exists():
+                    files = list(jk_dir.glob("*.yaml"))
+                    self.logger.error(f"Files in jk directory: {[f.name for f in files]}")
             return None
         
         try:

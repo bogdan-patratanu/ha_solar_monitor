@@ -10,8 +10,9 @@ from register_parser import RegisterConfig, ParserFactory
 # Driver registry mapping
 DRIVER_REGISTRY = {
     "modbusTCP": "py_modbus_tcp_driver.PyModbusTcpDriver",
-    "modbusRTU": "py_modbus_tcp_driver.PyModbusTcpDriver",
-    "rawTCPRTU": "raw_tcp_rtu_driver.RawTcpRtuDriver"
+    "modbusRTU": "py_modbus_rtu_driver.PyModbusRtuDriver",
+    "rawTCPRTU": "raw_tcp_rtu_driver.RawTcpRtuDriver",
+    "jkBMS": "jk_bms_driver.JkBmsDriver"
 }
 
 
@@ -34,6 +35,7 @@ class Equipment:
         self.manufacturer = metadata['manufacturer']
 
         connection_config = configuration.get('connection')
+        self.path = connection_config['path']
         self.host = connection_config['host']
         self.port = connection_config['port']
         self.modbus_id = connection_config['modbus_id']
@@ -63,31 +65,21 @@ class Equipment:
         self.logger = logger
 
     async def connect(self) -> bool:
-        """Connect with slave diagnostics and initialization."""
-        try:
-            # First check network connectivity
-            try:
-                reader, writer = await asyncio.open_connection(self.host, self.port)
-                writer.close()
-                await writer.wait_closed()
-                self.logger.info(f"Network connectivity to {self.host}:{self.port} confirmed")
-            except Exception as e:
-                self.logger.error(f"Network error connecting to {self.host}:{self.port}: {e}")
-                return False
-            
+        try:            
             # Get shared driver instance from pool
             if not self.driver_instance:
                 self.driver_instance = await get_shared_driver(
+                    self.path,
                     self.host,
                     self.port,
-                    self.driver_class,  # Pass the class, not the string
-                    self.logger  # Pass logger to driver pool
+                    self.driver_class,
+                    self.logger
                 )
             
             # Connect the driver if not already connected
             if not hasattr(self.driver_instance, 'connected') or not self.driver_instance.connected:
                 if hasattr(self.driver_instance, 'connect'):
-                    success = await self.driver_instance.connect(self.host, self.port, self.timeout)
+                    success = await self.driver_instance.connect(self.path, self.host, self.port, self.timeout)
                     if not success:
                         return False
                 else:
@@ -294,6 +286,10 @@ class Equipment:
 
     async def _verify_connectivity(self) -> bool:
         """Verify network connectivity to equipment."""
+        # Skip network check for non-TCP drivers (like RTU and JK BMS)
+        if hasattr(self.driver_instance, 'type') and self.driver_instance.type in ['pymodbusrtu', 'jkbms']:
+            return True
+            
         try:
             reader, writer = await asyncio.open_connection(self.host, self.port)
             writer.close()
