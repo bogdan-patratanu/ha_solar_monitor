@@ -38,6 +38,7 @@ class RegisterConfig:
     name: str = "unknown"
     offset: int = 0
     lookup: dict = None
+    valid_range: Optional[tuple] = None
     
     @classmethod
     def from_dict(cls, config: dict) -> 'RegisterConfig':
@@ -61,6 +62,10 @@ class RegisterConfig:
                 factor = config.get('factor', 1.0)
                 data_type_str = 'int16' if factor < 0 else 'uint16'
         
+        valid_range = config.get('valid_range')
+        if valid_range and isinstance(valid_range, list) and len(valid_range) == 2:
+            valid_range = tuple(valid_range)
+        
         return cls(
             address=addr,
             data_type=DataType(data_type_str),
@@ -69,7 +74,8 @@ class RegisterConfig:
             byte_swap=config.get('byte_swap', False),
             name=config.get('name', 'unknown'),
             offset=config.get('offset', 0),
-            lookup=config.get('lookup')
+            lookup=config.get('lookup'),
+            valid_range=valid_range
         )
 
 
@@ -89,6 +95,13 @@ class RegisterParser(ABC):
     def _apply_byte_swap(self, value: int) -> int:
         """Swap bytes within a 16-bit register"""
         return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF)
+    
+    def _validate_range(self, value: float, config: RegisterConfig) -> bool:
+        """Check if value is within valid range"""
+        if config.valid_range is None:
+            return True
+        min_val, max_val = config.valid_range
+        return min_val <= value <= max_val
 
 
 class UInt16Parser(RegisterParser):
@@ -201,6 +214,11 @@ class Int32Parser(RegisterParser):
             value -= 4294967296
         
         result = value * config.factor
+        
+        # Validate range if specified
+        if not self._validate_range(result, config):
+            return None
+        
         return round(result, 2)
 
 

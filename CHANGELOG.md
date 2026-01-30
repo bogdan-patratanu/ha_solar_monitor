@@ -2,7 +2,7 @@
 
 ## [1.0.10]
 
-- Add-on USB access
+- solved bug with out of range values
 
 ## [1.0.9]
 
