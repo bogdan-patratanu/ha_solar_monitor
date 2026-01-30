@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.10]
+
+- solved bug with out of range values
+
 ## [1.0.9]
 
 - Support for JK BMS in broadcast mode

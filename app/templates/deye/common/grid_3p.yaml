@@ -161,6 +161,7 @@ sensors:
     name: "Grid power total"
     unit: "W"
     factor: 1
+    valid_range: [-20000, 20000]
     icon: "mdi:transmission-tower"
     device_class: "power"
     state_class: "measurement"

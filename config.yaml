@@ -1,5 +1,5 @@
 name: Solar Monitor
-version: "1.0.9"
+version: "1.0.10"
 slug: solar_monitor
 description: Monitor solar equipments and publish data to Home Assistant
 url: https://github.com/Pugi/ha_solar_monitor
