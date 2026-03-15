@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.11]
+
+- Fixed serial device permission error after Home Assistant update by adding `uart: true` to addon manifest
+
 ## [1.0.10]
 
 - solved bug with out of range values

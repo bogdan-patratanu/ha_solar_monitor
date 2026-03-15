@@ -1,8 +1,8 @@
 name: Solar Monitor
-version: "1.0.10"
+version: "1.0.11"
 slug: solar_monitor
 description: Monitor solar equipments and publish data to Home Assistant
-url: https://github.com/Pugi/ha_solar_monitor
+url: https://github.com/bogdan-patratanu/ha_solar_monitor
 services:
   - mqtt:need
 hassio_api: true
@@ -17,6 +17,7 @@ init: false
 startup: application
 boot: auto
 host_network: true
+uart: true
 schema:
   inverters:
     - name: str
